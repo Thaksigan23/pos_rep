@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { BarChart3, Download } from "lucide-react"
+import { BarChart3, Download, FileDown } from "lucide-react"
 
 import { PageHeader } from "@/components/app/page-header"
 import { buttonVariants } from "@/components/ui/button"
@@ -109,6 +109,8 @@ export default async function ReportsPage({
     return `/reports/export?type=${type}&from=${from}&to=${to}`
   }
 
+  const pdfHref = `/reports/export/pdf?from=${from}&to=${to}`
+
   return (
     <div className="page-stack">
       <PageHeader
@@ -116,6 +118,15 @@ export default async function ReportsPage({
         title="Reports"
         description={`${presetLabel} · ${rangeLabel} · ${timezone}`}
         icon={BarChart3}
+        actions={
+          <Link
+            href={pdfHref}
+            className={cn(buttonVariants({ size: "sm" }), "btn-h")}
+          >
+            <FileDown className="size-3.5" />
+            Generate PDF
+          </Link>
+        }
       />
 
       <div className="flex flex-wrap gap-2">
@@ -248,22 +259,40 @@ export default async function ReportsPage({
         currencyLocale={currencyLocale}
       />
 
-      <section className="panel panel-pad">
-        <p className="section-label">Export CSV</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {REPORT_EXPORT_TYPES.map((type) => (
+      <section className="panel panel-pad space-y-4">
+        <div>
+          <p className="section-label">Generate PDF</p>
+          <p className="muted-xs mt-1">
+            Download a printable summary for {rangeLabel}.
+          </p>
+          <div className="mt-3">
             <Link
-              key={type}
-              href={exportHref(type)}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "btn-h"
-              )}
+              href={pdfHref}
+              className={cn(buttonVariants({ size: "sm" }), "btn-h")}
             >
-              <Download className="size-3.5" />
-              {type}
+              <FileDown className="size-3.5" />
+              Download PDF report
             </Link>
-          ))}
+          </div>
+        </div>
+
+        <div className="border-t pt-4">
+          <p className="section-label">Export CSV</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {REPORT_EXPORT_TYPES.map((type) => (
+              <Link
+                key={type}
+                href={exportHref(type)}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "sm" }),
+                  "btn-h"
+                )}
+              >
+                <Download className="size-3.5" />
+                {type}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </div>
