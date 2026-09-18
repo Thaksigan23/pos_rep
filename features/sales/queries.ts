@@ -14,6 +14,8 @@ export type PosProduct = {
   quantity: number
   stock_status: string | null
   track_inventory: boolean
+  category_id: string | null
+  category_name: string | null
   primary_image_path: string | null
   primary_image_url: string | null
 }
@@ -32,12 +34,12 @@ export async function searchPosProducts(shopId: string, q: string) {
   let query = supabase
     .from("shop_product_inventory")
     .select(
-      "product_id, name, sku, barcode, selling_price, quantity, stock_status, track_inventory, primary_image_path"
+      "product_id, name, sku, barcode, selling_price, quantity, stock_status, track_inventory, category_id, primary_image_path"
     )
     .eq("shop_id", shopId)
     .eq("is_active", true)
     .order("name")
-    .limit(30)
+    .limit(60)
 
   if (trimmed) {
     const pattern = `%${trimmed}%`
@@ -63,6 +65,8 @@ export async function searchPosProducts(shopId: string, q: string) {
     quantity: Number(row.quantity ?? 0),
     stock_status: row.stock_status,
     track_inventory: Boolean(row.track_inventory),
+    category_id: (row.category_id as string | null) ?? null,
+    category_name: null,
     primary_image_path: (row.primary_image_path as string | null) ?? null,
     primary_image_url: row.primary_image_path
       ? signed.get(row.primary_image_path as string) ?? null
@@ -100,6 +104,8 @@ export async function findPosProductByBarcode(shopId: string, barcode: string) {
     quantity: Number(data.quantity ?? 0),
     stock_status: data.stock_status,
     track_inventory: Boolean(data.track_inventory),
+    category_id: null,
+    category_name: null,
     primary_image_path: (data.primary_image_path as string | null) ?? null,
     primary_image_url: data.primary_image_path
       ? signed.get(data.primary_image_path as string) ?? null

@@ -22,6 +22,10 @@ import {
   Search,
   ScanBarcode,
   CircleAlert,
+  Check,
+  LayoutGrid,
+  List,
+  ArrowRight,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -38,7 +42,8 @@ import {
   cancelSaleAction,
 } from "@/features/sales/actions"
 import type { PosProduct, WalkInCustomer } from "@/features/sales/queries"
-import { displayName } from "@/lib/auth/labels"
+import { displayName, ROLE_LABELS } from "@/lib/auth/labels"
+import type { AppRole } from "@/lib/auth/roles"
 import { ProductThumbnail } from "@/features/products/components/product-thumbnail"
 import { useBarcodeScanner } from "@/lib/barcode/use-barcode-scanner"
 import { formatCurrency, roundMoney } from "@/lib/money/currency"
@@ -78,6 +83,7 @@ type CartLine = {
   discountAmount: number
   trackInventory: boolean
   stockQty: number
+  imageUrl: string | null
 }
 
 type CustomerOption = {
@@ -181,6 +187,13 @@ function customerName(c: {
   return displayName(c.first_name, c.last_name, "Customer")
 }
 
+function timeGreeting(): string {
+  const hour = new Date().getHours()
+  if (hour < 12) return "Good Morning"
+  if (hour < 17) return "Good Afternoon"
+  return "Good Evening"
+}
+
 export function PosTerminal({
   walkInCustomer,
   currencyCode,
@@ -188,6 +201,9 @@ export function PosTerminal({
   timezone,
   shopId,
   shopName,
+  categories = [],
+  cashierName,
+  cashierRole,
   taxEnabled = false,
   taxRate = 0,
   taxInclusive = false,
@@ -199,6 +215,9 @@ export function PosTerminal({
   timezone?: string | null
   shopId: string
   shopName: string
+  categories?: { id: string; name: string }[]
+  cashierName: string
+  cashierRole: AppRole
   taxEnabled?: boolean
   taxRate?: number
   taxInclusive?: boolean
@@ -211,6 +230,11 @@ export function PosTerminal({
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<PosProduct[]>([])
   const [searching, setSearching] = useState(false)
+  const [categoryId, setCategoryId] = useState("all")
+  const [sortBy, setSortBy] = useState<"name" | "price_asc" | "price_desc">(
+    "name"
+  )
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [cart, setCart] = useState<CartLine[]>([])
   const [customer, setCustomer] = useState<CustomerOption | null>(
     walkInCustomer
@@ -333,12 +357,8 @@ export function PosTerminal({
 
   useEffect(() => {
     const t = setTimeout(() => {
-      if (query.trim().length >= 1) runSearch(query)
-      else {
-        setResults([])
-        setSearching(false)
-      }
-    }, 250)
+      runSearch(query)
+    }, query.trim() ? 250 : 0)
     return () => clearTimeout(t)
   }, [query, runSearch])
 
@@ -380,6 +400,7 @@ export function PosTerminal({
           discountAmount: 0,
           trackInventory: Boolean(product.track_inventory),
           stockQty: Number(product.quantity ?? 0),
+          imageUrl: product.primary_image_url,
         },
       ]
     })
@@ -713,6 +734,29 @@ export function PosTerminal({
     return "text-emerald-700 dark:text-emerald-400"
   }
 
+  const cartIds = useMemo(
+    () => new Set(cart.map((l) => l.productId)),
+    [cart]
+  )
+
+  const catalog = useMemo(() => {
+    let rows = results
+    if (categoryId !== "all") {
+      rows = rows.filter((p) => p.category_id === categoryId)
+    }
+    const sorted = [...rows]
+    sorted.sort((a, b) => {
+      if (sortBy === "price_asc") {
+        return Number(a.selling_price) - Number(b.selling_price)
+      }
+      if (sortBy === "price_desc") {
+        return Number(b.selling_price) - Number(a.selling_price)
+      }
+      return a.name.localeCompare(b.name)
+    })
+    return sorted
+  }, [results, categoryId, sortBy])
+
   const checkoutProps = {
     pending,
     walkInCustomer,
@@ -756,49 +800,12 @@ export function PosTerminal({
 
   return (
     <div
-      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-muted/30"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-muted"
       data-shop-id={shopId}
     >
-      <div className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-4 py-2.5 md:px-5">
-        <div className="min-w-0">
-          <h1 className="font-heading text-base font-semibold tracking-tight md:text-lg">
-            Point of Sale
-          </h1>
-          <p className="truncate text-xs text-muted-foreground">{shopName}</p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8"
-            onClick={openHeld}
-          >
-            <ListOrdered className="size-3.5" aria-hidden />
-            <span className="hidden sm:inline">Held sales</span>
-            <span className="sm:hidden">Held</span>
-          </Button>
-          <Button
-            type="button"
-            size="sm"
-            className="relative h-8 lg:hidden"
-            onClick={() => setMobileCartOpen(true)}
-            aria-label={`Open cart, ${cartItemCount} items`}
-          >
-            <ShoppingCart className="size-3.5" aria-hidden />
-            Cart
-            {cartItemCount > 0 ? (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1 text-[10px] font-semibold text-foreground">
-                {cartItemCount > 99 ? "99+" : Math.round(cartItemCount)}
-              </span>
-            ) : null}
-          </Button>
-        </div>
-      </div>
-
       {success ? (
         <div className="shrink-0 border-b bg-background px-4 py-3 md:px-5">
-          <Alert className="border-emerald-500/30 bg-emerald-500/5">
+          <Alert className="border-accent/30 bg-accent/5">
             <AlertDescription className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span>
                 Sale {success.saleNumber ?? success.id.slice(0, 8)} ·{" "}
@@ -843,7 +850,7 @@ export function PosTerminal({
       ) : null}
 
       {resume ? (
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(32rem,1.3fr)]">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
           <div className="min-h-0 space-y-3 overflow-auto p-4">
             <div className="flex items-center justify-between gap-2">
               <div>
@@ -908,62 +915,222 @@ export function PosTerminal({
           </aside>
         </div>
       ) : (
-        <div className="grid min-h-0 min-w-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
-          {/* Product discovery */}
-          <section className="flex min-h-0 min-w-0 flex-col overflow-hidden p-3 md:p-4">
-            <div className="relative shrink-0">
-              <Search
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden
-              />
-              <Input
-                ref={searchRef}
-                autoFocus
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onBlur={() => setSearchFocused(false)}
-                onKeyDown={onSearchKeyDown}
-                placeholder="Search products, SKU or scan barcode…"
-                className="control-h h-10 border-foreground/15 bg-background pr-11 pl-10 text-base shadow-sm md:text-sm"
-                aria-label="Search products or scan barcode"
-              />
-              <ScanBarcode
-                className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden
-              />
+        <div className="grid min-h-0 min-w-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(21rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
+          <section className="flex min-h-0 min-w-0 flex-col overflow-hidden p-4 md:p-5">
+            <div className="mb-4 flex shrink-0 items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm text-muted-foreground">{timeGreeting()}</p>
+                <h1 className="font-heading truncate text-2xl font-bold tracking-tight">
+                  {shopName}
+                </h1>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-9"
+                  onClick={openHeld}
+                >
+                  <ListOrdered className="size-3.5" aria-hidden />
+                  <span className="hidden sm:inline">Held</span>
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="relative h-9 lg:hidden"
+                  onClick={() => setMobileCartOpen(true)}
+                  aria-label={`Open cart, ${cartItemCount} items`}
+                >
+                  <ShoppingCart className="size-3.5" aria-hidden />
+                  Cart
+                  {cartItemCount > 0 ? (
+                    <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-foreground/20 px-1 text-[10px] font-semibold">
+                      {cartItemCount > 99 ? "99+" : Math.round(cartItemCount)}
+                    </span>
+                  ) : null}
+                </Button>
+                <div className="hidden items-center gap-2 rounded-full border bg-background px-2 py-1 sm:flex">
+                  <span className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    {cashierName.slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="pr-1 leading-tight">
+                    <span className="block max-w-[8rem] truncate text-sm font-medium">
+                      {cashierName}
+                    </span>
+                    <span className="block text-[11px] text-muted-foreground">
+                      {ROLE_LABELS[cashierRole]}
+                    </span>
+                  </span>
+                </div>
+              </div>
             </div>
-            <p className="mt-1 shrink-0 text-[11px] text-muted-foreground">
-              Scanner works when search is not focused · Enter to look up barcode
-            </p>
 
-            <div className="mt-2 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-              {searching ? (
+            <div className="mb-3 flex shrink-0 flex-wrap items-center gap-2">
+              <h2 className="font-heading mr-auto text-lg font-semibold">Products</h2>
+              <select
+                className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                aria-label="Filter by category"
+              >
+                <option value="all">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <div className="relative min-w-[12rem] flex-1 sm:max-w-xs">
+                <Search
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  ref={searchRef}
+                  autoFocus
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  onKeyDown={onSearchKeyDown}
+                  placeholder="Search..."
+                  className="h-9 border-input bg-background pr-9 pl-9"
+                  aria-label="Search products or scan barcode"
+                />
+                <ScanBarcode
+                  className="pointer-events-none absolute top-1/2 right-3 size-3.5 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+              </div>
+            </div>
+
+            <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-2 text-sm">
+              <p className="text-muted-foreground">
+                {searching
+                  ? "Loading…"
+                  : `${catalog.length} item${catalog.length === 1 ? "" : "s"} found`}
+              </p>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1.5 text-muted-foreground">
+                  <span className="text-xs">Sort by</span>
+                  <select
+                    className="h-8 rounded-lg border border-input bg-background px-2 text-sm text-foreground"
+                    value={sortBy}
+                    onChange={(e) =>
+                      setSortBy(
+                        e.target.value as "name" | "price_asc" | "price_desc"
+                      )
+                    }
+                  >
+                    <option value="name">Name</option>
+                    <option value="price_asc">Price ↑</option>
+                    <option value="price_desc">Price ↓</option>
+                  </select>
+                </label>
+                <div className="flex rounded-lg border bg-background p-0.5">
+                  <button
+                    type="button"
+                    className={cn(
+                      "rounded-md p-1.5",
+                      viewMode === "grid" && "bg-primary text-primary-foreground"
+                    )}
+                    onClick={() => setViewMode("grid")}
+                    aria-label="Grid view"
+                  >
+                    <LayoutGrid className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    className={cn(
+                      "rounded-md p-1.5",
+                      viewMode === "list" && "bg-primary text-primary-foreground"
+                    )}
+                    onClick={() => setViewMode("list")}
+                    aria-label="List view"
+                  >
+                    <List className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+              {searching && catalog.length === 0 ? (
                 <div
-                  className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center"
+                  className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-background px-4 text-center"
                   aria-busy="true"
-                  aria-live="polite"
                 >
                   <Loader2
                     className="mb-2 size-8 animate-spin text-muted-foreground"
                     aria-hidden
                   />
-                  <p className="text-sm font-medium">Update is coming…</p>
+                  <p className="text-sm font-medium">Loading products…</p>
+                </div>
+              ) : catalog.length === 0 ? (
+                <div className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-background px-4 text-center">
+                  <ScanBarcode
+                    className="mb-2 size-8 text-muted-foreground/50"
+                    aria-hidden
+                  />
+                  <p className="text-sm font-medium">No products found</p>
                   <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-                    Loading products for your search.
+                    Try another search, category, or scan a barcode.
                   </p>
                 </div>
-              ) : results.length === 0 ? (
-                <div className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center">
-                  <ScanBarcode className="mb-2 size-8 text-muted-foreground/50" aria-hidden />
-                  <p className="text-sm font-medium">Ready to scan</p>
-                  <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-                    Search by name or SKU, or scan a barcode to add products.
-                  </p>
-                </div>
+              ) : viewMode === "list" ? (
+                <ul className="space-y-2">
+                  {catalog.map((p) => {
+                    const inCart = cartIds.has(p.product_id)
+                    const out =
+                      p.track_inventory &&
+                      (p.stock_status === "out_of_stock" ||
+                        Number(p.quantity ?? 0) <= 0)
+                    return (
+                      <li key={p.product_id}>
+                        <button
+                          type="button"
+                          className={cn(
+                            "relative flex w-full items-center gap-3 rounded-xl border bg-background p-2.5 text-left transition hover:border-primary/40",
+                            inCart && "border-primary/50 ring-1 ring-primary/20",
+                            out && "opacity-60"
+                          )}
+                          onClick={() => addProduct(p)}
+                        >
+                          <ProductThumbnail
+                            src={p.primary_image_url}
+                            alt=""
+                            size="pos"
+                          />
+                          <span className="min-w-0 flex-1">
+                            <span className="line-clamp-1 text-sm font-medium">
+                              {p.name}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {p.sku}
+                            </span>
+                          </span>
+                          <span className="text-sm font-bold text-primary tabular-nums">
+                            {formatCurrency(
+                              Number(p.selling_price),
+                              currencyCode,
+                              currencyLocale
+                            )}
+                          </span>
+                          {inCart ? (
+                            <span className="flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                              <Check className="size-3.5" />
+                            </span>
+                          ) : null}
+                        </button>
+                      </li>
+                    )
+                  })}
+                </ul>
               ) : (
-                <ul className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-2 sm:grid-cols-[repeat(3,minmax(0,1fr))] xl:grid-cols-[repeat(4,minmax(0,1fr))] 2xl:grid-cols-[repeat(5,minmax(0,1fr))]">
-                  {results.map((p) => {
+                <ul className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-3 sm:grid-cols-[repeat(3,minmax(0,1fr))] xl:grid-cols-[repeat(4,minmax(0,1fr))]">
+                  {catalog.map((p) => {
+                    const inCart = cartIds.has(p.product_id)
                     const out =
                       p.track_inventory &&
                       (p.stock_status === "out_of_stock" ||
@@ -973,18 +1140,19 @@ export function PosTerminal({
                         <button
                           type="button"
                           className={cn(
-                            "flex w-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card text-left transition",
-                            "hover:border-foreground/25 hover:bg-muted/40 focus-visible:ring-2 focus-visible:ring-ring",
+                            "relative flex w-full min-w-0 flex-col overflow-hidden rounded-2xl border border-border/80 bg-background text-left transition",
+                            "hover:border-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-ring",
+                            inCart && "border-primary/50 ring-1 ring-primary/20",
                             out && "opacity-60"
                           )}
-                          onClick={() => {
-                            addProduct(p)
-                            setQuery("")
-                            setResults([])
-                            searchRef.current?.focus()
-                          }}
+                          onClick={() => addProduct(p)}
                         >
-                          <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-muted/40">
+                          {inCart ? (
+                            <span className="absolute top-2 right-2 z-10 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+                              <Check className="size-3.5" strokeWidth={3} />
+                            </span>
+                          ) : null}
+                          <span className="flex aspect-square w-full items-center justify-center overflow-hidden bg-muted/50">
                             <ProductThumbnail
                               src={p.primary_image_url}
                               alt=""
@@ -992,29 +1160,16 @@ export function PosTerminal({
                               className="rounded-none border-0 bg-transparent"
                             />
                           </span>
-                          <span className="min-w-0 space-y-1 p-2.5">
-                            <span className="line-clamp-2 text-sm font-medium leading-snug">
+                          <span className="min-w-0 space-y-1 p-3">
+                            <span className="line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug">
                               {p.name}
                             </span>
-                            <span className="block truncate font-mono text-[11px] text-muted-foreground">
-                              {p.sku}
-                            </span>
-                            <span className="flex items-baseline justify-between gap-1">
-                              <span className="truncate text-sm font-semibold tabular-nums">
-                                {formatCurrency(
-                                  Number(p.selling_price),
-                                  currencyCode,
-                                  currencyLocale
-                                )}
-                              </span>
-                              <span
-                                className={cn(
-                                  "shrink-0 text-[10px] font-medium",
-                                  stockTone(p)
-                                )}
-                              >
-                                {stockLabel(p)}
-                              </span>
+                            <span className="block text-base font-bold text-primary tabular-nums">
+                              {formatCurrency(
+                                Number(p.selling_price),
+                                currencyCode,
+                                currencyLocale
+                              )}
                             </span>
                           </span>
                         </button>
@@ -1026,14 +1181,12 @@ export function PosTerminal({
             </div>
           </section>
 
-          {/* Desktop checkout — fills remaining height, no page scroll */}
           <aside className="hidden min-h-0 flex-col overflow-hidden border-l bg-background lg:flex">
             <CheckoutColumn {...checkoutProps} />
           </aside>
         </div>
       )}
 
-      {/* Mobile cart / checkout */}
       <Sheet open={mobileCartOpen} onOpenChange={setMobileCartOpen}>
         <SheetContent
           side="bottom"
@@ -1041,7 +1194,7 @@ export function PosTerminal({
           showCloseButton
         >
           <SheetHeader className="shrink-0 border-b px-4 py-3 text-left">
-            <SheetTitle>Cart & checkout</SheetTitle>
+            <SheetTitle>Shopping Cart</SheetTitle>
             <SheetDescription>
               {cartItemCount > 0
                 ? `${Math.round(cartItemCount)} item${cartItemCount === 1 ? "" : "s"}`
@@ -1117,6 +1270,7 @@ export function PosTerminal({
     </div>
   )
 }
+
 
 function CheckoutColumn(props: {
   pending: boolean
@@ -1217,11 +1371,23 @@ function CheckoutColumn(props: {
     0,
     3
   )
+  const draftOrderNo = `#${String(cart.length * 17 + cartQty * 3 + 120000).slice(-6)}`
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
-      {/* Customer — reference style */}
-      <div className="shrink-0 space-y-2 border-b px-3 py-3">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3.5">
+        <div className="flex items-center gap-2">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <ShoppingCart className="size-4" aria-hidden />
+          </span>
+          <h2 className="font-heading text-base font-semibold">Shopping Cart</h2>
+        </div>
+        <p className="text-sm font-semibold tabular-nums text-muted-foreground">
+          {cart.length === 0 ? "Draft" : draftOrderNo}
+        </p>
+      </div>
+
+      <div className="shrink-0 space-y-2 border-b px-4 py-3">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
@@ -1234,6 +1400,7 @@ function CheckoutColumn(props: {
           <Button
             type="button"
             size="sm"
+            variant="outline"
             className="h-8 shrink-0"
             onClick={() => setShowNewCustomer((v) => !v)}
           >
@@ -1245,7 +1412,7 @@ function CheckoutColumn(props: {
             <Button
               type="button"
               size="sm"
-              className="h-8 flex-1"
+              className="h-8"
               variant={customer?.is_walk_in ? "default" : "outline"}
               onClick={() =>
                 setCustomer({
@@ -1319,8 +1486,122 @@ function CheckoutColumn(props: {
             </Button>
           </div>
         ) : null}
+      </div>
 
-        {/* Payment method pills (like Pickup/Delivery in reference) */}
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+        {cart.length === 0 ? (
+          <div className="flex h-full min-h-40 flex-col items-center justify-center text-center">
+            <ShoppingCart
+              className="mb-2 size-8 text-muted-foreground/40"
+              aria-hidden
+            />
+            <p className="text-sm font-medium">Cart is empty</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Tap products to add them here
+            </p>
+          </div>
+        ) : (
+          <ul className="space-y-3">
+            {cart.map((line) => {
+              const lineTotal = previewLineTax({
+                qty: line.quantity,
+                unitPrice: line.unitPrice,
+                discount: line.discountAmount,
+                taxEnabled,
+                taxRate,
+                taxInclusive,
+              }).total
+              return (
+                <li key={line.productId} className="flex gap-3">
+                  <ProductThumbnail
+                    src={line.imageUrl}
+                    alt=""
+                    size="pos"
+                    className="rounded-xl"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="line-clamp-2 text-sm font-medium leading-snug">
+                        {line.name}
+                      </p>
+                      <button
+                        type="button"
+                        className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
+                        onClick={() =>
+                          setCart((prev) =>
+                            prev.filter((l) => l.productId !== line.productId)
+                          )
+                        }
+                        aria-label={`Remove ${line.name}`}
+                      >
+                        <Trash2 className="size-3.5" aria-hidden />
+                      </button>
+                    </div>
+                    <p className="mt-0.5 text-sm font-semibold text-primary tabular-nums">
+                      {formatCurrency(lineTotal, currencyCode, currencyLocale)}
+                    </p>
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        className="flex size-7 items-center justify-center rounded-md border bg-background"
+                        onClick={() =>
+                          updateQty(line.productId, line.quantity - 1)
+                        }
+                        aria-label={`Decrease ${line.name}`}
+                      >
+                        <Minus className="size-3.5" />
+                      </button>
+                      <span className="w-7 text-center text-sm font-semibold tabular-nums">
+                        {line.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground"
+                        onClick={() =>
+                          updateQty(line.productId, line.quantity + 1)
+                        }
+                        aria-label={`Increase ${line.name}`}
+                      >
+                        <Plus className="size-3.5" />
+                      </button>
+                      <Input
+                        className="ml-auto h-7 w-16 text-xs"
+                        inputMode="decimal"
+                        placeholder="Disc"
+                        value={
+                          line.discountAmount ? String(line.discountAmount) : ""
+                        }
+                        onChange={(e) =>
+                          updateDiscount(
+                            line.productId,
+                            Number(e.target.value) || 0
+                          )
+                        }
+                        aria-label={`Discount for ${line.name}`}
+                      />
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+      </div>
+
+      <div className="shrink-0 space-y-3 border-t px-4 py-3">
+        <div className="flex gap-2">
+          <Input
+            className="h-10 flex-1"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Coupon / sale notes"
+            aria-label="Sale notes"
+          />
+          <Button type="button" size="icon" className="size-10 shrink-0" disabled>
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
+
         <div className="grid grid-cols-3 gap-1.5">
           {payMethods.map((m) => (
             <button
@@ -1347,167 +1628,57 @@ function CheckoutColumn(props: {
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Cart lines — fills middle */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pt-2">
-        <div className="mb-1.5 flex shrink-0 items-center justify-between">
-          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-            Cart items
-          </p>
-          {cart.length > 0 ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              onClick={clearCart}
-            >
-              Clear
-            </Button>
-          ) : null}
-        </div>
-        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border bg-muted/20">
-          {cart.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center px-4 text-center">
-              <ShoppingCart
-                className="mb-2 size-7 text-muted-foreground/40"
-                aria-hidden
-              />
-              <p className="text-sm font-medium">No items yet</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Tap products on the left to add
-              </p>
-            </div>
-          ) : (
-            <ul className="h-full divide-y overflow-y-auto">
-              {cart.map((line) => {
-                const lineTotal = previewLineTax({
-                  qty: line.quantity,
-                  unitPrice: line.unitPrice,
-                  discount: line.discountAmount,
-                  taxEnabled,
-                  taxRate,
-                  taxInclusive,
-                }).total
-                return (
-                  <li key={line.productId} className="px-2.5 py-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">
-                          {line.name}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {formatCurrency(
-                            line.unitPrice,
-                            currencyCode,
-                            currencyLocale
-                          )}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-destructive"
-                        onClick={() =>
-                          setCart((prev) =>
-                            prev.filter((l) => l.productId !== line.productId)
-                          )
-                        }
-                        aria-label={`Remove ${line.name}`}
-                      >
-                        <Trash2 className="size-3.5" aria-hidden />
-                      </button>
-                    </div>
-                    <div className="mt-1.5 flex items-center gap-1">
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="outline"
-                        className="size-7"
-                        onClick={() =>
-                          updateQty(line.productId, line.quantity - 1)
-                        }
-                        aria-label={`Decrease quantity of ${line.name}`}
-                      >
-                        <Minus className="size-3" aria-hidden />
-                      </Button>
-                      <span className="w-8 text-center text-sm font-semibold tabular-nums">
-                        {line.quantity}
-                      </span>
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="outline"
-                        className="size-7"
-                        onClick={() =>
-                          updateQty(line.productId, line.quantity + 1)
-                        }
-                        aria-label={`Increase quantity of ${line.name}`}
-                      >
-                        <Plus className="size-3" aria-hidden />
-                      </Button>
-                      <Input
-                        className="ml-1 h-7 w-16 text-xs"
-                        inputMode="decimal"
-                        placeholder="Disc"
-                        value={
-                          line.discountAmount ? String(line.discountAmount) : ""
-                        }
-                        onChange={(e) =>
-                          updateDiscount(
-                            line.productId,
-                            Number(e.target.value) || 0
-                          )
-                        }
-                        aria-label={`Discount for ${line.name}`}
-                      />
-                      <span className="ml-auto text-sm font-semibold tabular-nums">
-                        {formatCurrency(
-                          lineTotal,
-                          currencyCode,
-                          currencyLocale
-                        )}
-                      </span>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </div>
-      </div>
+        {primaryPay.method === "cash" ? (
+          <Input
+            className="h-9"
+            inputMode="decimal"
+            value={primaryPay.tendered}
+            onChange={(e) =>
+              setPaymentLines([
+                { ...primaryPay, tendered: e.target.value, amount: "" },
+              ])
+            }
+            placeholder="Cash tendered"
+            aria-label="Cash tendered"
+          />
+        ) : (
+          <Input
+            className="h-9"
+            inputMode="decimal"
+            value={primaryPay.amount}
+            onChange={(e) =>
+              setPaymentLines([
+                { ...primaryPay, amount: e.target.value, tendered: "" },
+              ])
+            }
+            placeholder="Amount (blank = full total)"
+            aria-label="Payment amount"
+          />
+        )}
 
-      {/* Summary + CTA — reference style, fixed bottom */}
-      <div className="shrink-0 space-y-2.5 border-t px-3 py-3">
-        <div className="space-y-1 text-sm">
-          <div className="flex justify-between gap-3">
-            <span className="text-muted-foreground">Total quantity</span>
-            <span className="font-semibold tabular-nums">{cartQty}</span>
-          </div>
-          {totals.discountTotal > 0.001 ? (
-            <div className="flex justify-between gap-3">
-              <span className="text-muted-foreground">Discount</span>
-              <span className="font-medium tabular-nums text-amber-700 dark:text-amber-300">
-                −
-                {formatCurrency(
-                  totals.discountTotal,
-                  currencyCode,
-                  currencyLocale
-                )}
-              </span>
-            </div>
-          ) : null}
-          <div className="flex justify-between gap-3">
-            <span className="text-muted-foreground">
-              Tax{taxEnabled ? "" : ""}
+        <div className="space-y-1.5 text-sm">
+          <div className="flex justify-between gap-3 text-muted-foreground">
+            <span>Subtotal</span>
+            <span className="tabular-nums text-foreground">
+              {formatCurrency(totals.merchandise, currencyCode, currencyLocale)}
             </span>
-            <span className="font-medium tabular-nums">
+          </div>
+          <div className="flex justify-between gap-3 text-muted-foreground">
+            <span>Tax</span>
+            <span className="tabular-nums text-foreground">
               {formatCurrency(totals.taxTotal, currencyCode, currencyLocale)}
             </span>
           </div>
+          <div className="flex justify-between gap-3 text-muted-foreground">
+            <span>Discount</span>
+            <span className="tabular-nums text-foreground">
+              {formatCurrency(totals.discountTotal, currencyCode, currencyLocale)}
+            </span>
+          </div>
           <div className="flex items-baseline justify-between gap-3 border-t pt-2">
-            <span className="text-sm font-semibold">Total amount</span>
-            <span className="font-heading text-2xl font-bold tracking-tight text-accent tabular-nums">
+            <span className="font-semibold">Total</span>
+            <span className="font-heading text-xl font-bold tabular-nums">
               {formatCurrency(displayGrand, currencyCode, currencyLocale)}
             </span>
           </div>
@@ -1519,110 +1690,40 @@ function CheckoutColumn(props: {
           </p>
         ) : null}
 
-        <Input
-          className="h-9"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Sale notes (optional)"
-          aria-label="Sale notes"
-        />
-
-        {primaryPay.method === "cash" ? (
-          <div className="space-y-1">
-            <label
-              htmlFor="pos-tendered"
-              className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase"
-            >
-              Cash tendered
-            </label>
-            <Input
-              id="pos-tendered"
-              className="h-9"
-              inputMode="decimal"
-              value={primaryPay.tendered}
-              onChange={(e) =>
-                setPaymentLines([
-                  { ...primaryPay, tendered: e.target.value, amount: "" },
-                ])
-              }
-              placeholder="0.00"
-            />
-            {(() => {
-              const t = Number(primaryPay.tendered)
-              if (!Number.isFinite(t) || t <= 0) return null
-              const change = roundMoney(t - displayGrand)
-              return (
-                <p
-                  className={cn(
-                    "text-sm font-semibold tabular-nums",
-                    change >= 0
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-destructive"
-                  )}
-                >
-                  {change >= 0 ? "Change " : "Short "}
-                  {formatCurrency(Math.abs(change), currencyCode, currencyLocale)}
-                </p>
-              )
-            })()}
-          </div>
-        ) : (
-          <div className="space-y-1">
-            <label
-              htmlFor="pos-pay-amount"
-              className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase"
-            >
-              Amount (blank = full total)
-            </label>
-            <Input
-              id="pos-pay-amount"
-              className="h-9"
-              inputMode="decimal"
-              value={primaryPay.amount}
-              onChange={(e) =>
-                setPaymentLines([
-                  { ...primaryPay, amount: e.target.value, tendered: "" },
-                ])
-              }
-              placeholder={formatCurrency(
-                displayGrand,
-                currencyCode,
-                currencyLocale
-              )}
-            />
-          </div>
-        )}
-
-        <Button
-          type="button"
-          className="h-11 w-full text-sm font-semibold"
-          disabled={pending || displayGrand <= 0}
-          aria-busy={pending}
-          onClick={onComplete}
-        >
-          {pending ? (
-            <>
-              <Loader2 className="size-4 animate-spin" aria-hidden />
-              Completing…
-            </>
-          ) : (
-            `Complete sale · ${formatCurrency(displayGrand, currencyCode, currencyLocale)}`
-          )}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="h-9 w-full"
-          disabled={pending || cart.length === 0}
-          onClick={onHold}
-        >
-          <Pause className="size-3.5" aria-hidden />
-          Hold sale
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="size-11 shrink-0"
+            disabled={pending || cart.length === 0}
+            onClick={onHold}
+            aria-label="Hold sale"
+          >
+            <Pause className="size-4" aria-hidden />
+          </Button>
+          <Button
+            type="button"
+            className="h-11 flex-1 text-sm font-semibold"
+            disabled={pending || displayGrand <= 0}
+            aria-busy={pending}
+            onClick={onComplete}
+          >
+            {pending ? (
+              <>
+                <Loader2 className="size-4 animate-spin" aria-hidden />
+                Submitting…
+              </>
+            ) : (
+              "Submit Order"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   )
 }
+
 
 function PaymentPanel({
   pending,

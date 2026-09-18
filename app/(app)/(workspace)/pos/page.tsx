@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 
 import { PosTerminal } from "@/features/sales/components/pos-terminal"
 import { getWalkInCustomer } from "@/features/sales/queries"
+import { listCatalogLookups } from "@/features/products/queries"
 import { requirePageAccess } from "@/lib/auth/workspace"
 import { createClient } from "@/lib/supabase/server"
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: "POS" }
 export default async function PosPage() {
   const session = await requirePageAccess("pos")
   const walkInCustomer = await getWalkInCustomer()
+  const lookups = await listCatalogLookups()
   const supabase = await createClient()
   const { data: settings } = await supabase
     .from("shop_settings")
@@ -25,6 +27,19 @@ export default async function PosPage() {
         walkInCustomer={walkInCustomer}
         shopId={session.shop.id}
         shopName={session.shop.name}
+        categories={lookups.categories.map((c) => ({
+          id: c.id,
+          name: c.name,
+        }))}
+        cashierName={
+          [session.profile.firstName, session.profile.lastName]
+            .filter(Boolean)
+            .join(" ")
+            .trim() ||
+          session.email ||
+          "Cashier"
+        }
+        cashierRole={session.role}
         currencyCode={
           settings?.currency_code ?? session.shopSettings.currencyCode
         }
