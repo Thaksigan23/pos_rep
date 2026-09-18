@@ -908,7 +908,7 @@ export function PosTerminal({
           </aside>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(32rem,1.3fr)]">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
           {/* Product discovery */}
           <section className="flex min-h-0 flex-col overflow-hidden p-3 md:p-4">
             <div className="relative shrink-0">
@@ -962,7 +962,7 @@ export function PosTerminal({
                   </p>
                 </div>
               ) : (
-                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-2">
+                <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                   {results.map((p) => {
                     const out =
                       p.track_inventory &&
@@ -1208,65 +1208,65 @@ function CheckoutColumn(props: {
     createCustomer,
   } = props
 
+  const cartQty = cart.reduce((n, l) => n + l.quantity, 0)
+  const primaryPay = paymentLines[0] ?? INITIAL_PAYMENT_LINE
+  const payMethods = (Object.keys(PAYMENT_METHOD_LABELS) as PaymentMethod[]).slice(
+    0,
+    3
+  )
+
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      {/* Customer — compact, fixed */}
-      <div className="shrink-0 border-b px-3 py-2.5">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-background">
+      {/* Customer — reference style */}
+      <div className="shrink-0 space-y-2 border-b px-3 py-3">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
               Customer
             </p>
-            <p className="truncate text-sm font-semibold leading-tight">
-              {customer ? customerName(customer) : "None selected"}
-              {customer?.phone ? (
-                <span className="font-normal text-muted-foreground">
-                  {" "}
-                  · {customer.phone}
-                </span>
-              ) : null}
+            <p className="truncate text-sm font-semibold">
+              {customer ? customerName(customer) : "Walk-in Customer"}
             </p>
           </div>
-          <div className="flex shrink-0 gap-1">
-            {walkInCustomer ? (
-              <Button
-                type="button"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                variant={customer?.is_walk_in ? "default" : "outline"}
-                onClick={() =>
-                  setCustomer({
-                    id: walkInCustomer.id,
-                    first_name: walkInCustomer.first_name,
-                    last_name: walkInCustomer.last_name,
-                    phone: walkInCustomer.phone,
-                    is_walk_in: true,
-                  })
-                }
-              >
-                Walk-in
-              </Button>
-            ) : null}
+          <Button
+            type="button"
+            size="sm"
+            className="h-8 shrink-0"
+            onClick={() => setShowNewCustomer((v) => !v)}
+          >
+            {showNewCustomer ? "Close" : "Add New"}
+          </Button>
+        </div>
+        <div className="flex gap-1.5">
+          {walkInCustomer ? (
             <Button
               type="button"
               size="sm"
-              className="h-7 px-2 text-xs"
-              variant="outline"
-              onClick={() => setShowNewCustomer((v) => !v)}
+              className="h-8 flex-1"
+              variant={customer?.is_walk_in ? "default" : "outline"}
+              onClick={() =>
+                setCustomer({
+                  id: walkInCustomer.id,
+                  first_name: walkInCustomer.first_name,
+                  last_name: walkInCustomer.last_name,
+                  phone: walkInCustomer.phone,
+                  is_walk_in: true,
+                })
+              }
             >
-              New
+              Walk-in
             </Button>
-          </div>
+          ) : null}
+          <Input
+            className="h-8 flex-1 text-sm"
+            value={customerQ}
+            onChange={(e) => setCustomerQ(e.target.value)}
+            placeholder="Search customer…"
+            aria-label="Search customers"
+          />
         </div>
-        <Input
-          className="mt-1.5 h-8 text-sm"
-          value={customerQ}
-          onChange={(e) => setCustomerQ(e.target.value)}
-          placeholder="Search customers…"
-          aria-label="Search customers"
-        />
         {customerResults.length > 0 ? (
-          <ul className="mt-1 max-h-24 overflow-auto rounded-lg border">
+          <ul className="max-h-20 overflow-auto rounded-lg border">
             {customerResults.map((c) => (
               <li key={c.id}>
                 <button
@@ -1286,7 +1286,7 @@ function CheckoutColumn(props: {
           </ul>
         ) : null}
         {showNewCustomer ? (
-          <div className="mt-1.5 grid grid-cols-2 gap-1.5 rounded-lg border p-2">
+          <div className="grid grid-cols-2 gap-1.5 rounded-lg border p-2">
             <Input
               className="h-8"
               placeholder="First name"
@@ -1300,7 +1300,7 @@ function CheckoutColumn(props: {
               onChange={(e) => setNewLast(e.target.value)}
             />
             <Input
-              className="h-8 col-span-2"
+              className="col-span-2 h-8"
               placeholder="Phone"
               value={newPhone}
               onChange={(e) => setNewPhone(e.target.value)}
@@ -1316,65 +1316,69 @@ function CheckoutColumn(props: {
             </Button>
           </div>
         ) : null}
+
+        {/* Payment method pills (like Pickup/Delivery in reference) */}
+        <div className="grid grid-cols-3 gap-1.5">
+          {payMethods.map((m) => (
+            <button
+              key={m}
+              type="button"
+              className={cn(
+                "h-9 rounded-lg border text-xs font-semibold transition",
+                primaryPay.method === m
+                  ? "border-foreground bg-foreground text-background"
+                  : "bg-card text-foreground hover:bg-muted/60"
+              )}
+              onClick={() =>
+                setPaymentLines([
+                  {
+                    ...primaryPay,
+                    method: m,
+                    amount: "",
+                    tendered: m === "cash" ? primaryPay.tendered : "",
+                  },
+                ])
+              }
+            >
+              {PAYMENT_METHOD_LABELS[m]}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Cart — takes all remaining space */}
+      {/* Cart lines — fills middle */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pt-2">
-        <div className="flex shrink-0 items-center justify-between gap-2 pb-1.5">
-          <p className="text-sm font-semibold">
-            Cart
-            {cart.length > 0 ? (
-              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                ({cart.reduce((n, l) => n + l.quantity, 0)} items)
-              </span>
-            ) : null}
+        <div className="mb-1.5 flex shrink-0 items-center justify-between">
+          <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+            Cart items
           </p>
-          <div className="flex items-center gap-1">
-            <Input
-              id="pos-notes"
-              className="h-7 w-28 text-xs"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes"
-              aria-label="Sale notes"
-            />
-            {cart.length > 0 ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={clearCart}
-              >
-                Clear
-              </Button>
-            ) : null}
-          </div>
+          {cart.length > 0 ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={clearCart}
+            >
+              Clear
+            </Button>
+          ) : null}
         </div>
-
-        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border bg-card">
+        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border bg-muted/20">
           {cart.length === 0 ? (
-            <div className="flex h-full min-h-[8rem] flex-col items-center justify-center px-4 text-center">
+            <div className="flex h-full flex-col items-center justify-center px-4 text-center">
               <ShoppingCart
-                className="mb-2 size-8 text-muted-foreground/40"
+                className="mb-2 size-7 text-muted-foreground/40"
                 aria-hidden
               />
-              <p className="text-sm font-medium">Cart is empty</p>
+              <p className="text-sm font-medium">No items yet</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Scan or select products — cart fills this space.
+                Tap products on the left to add
               </p>
             </div>
           ) : (
             <ul className="h-full divide-y overflow-y-auto">
               {cart.map((line) => {
-                const overStock =
-                  line.trackInventory && line.quantity > line.stockQty
-                const lineGross = roundMoney(line.quantity * line.unitPrice)
-                const maxDiscount = roundMoney(
-                  lineGross * cashierMaxLineDiscountPercent
-                )
-                const discountOver =
-                  line.discountAmount > maxDiscount + 0.0001
                 const lineTotal = previewLineTax({
                   qty: line.quantity,
                   unitPrice: line.unitPrice,
@@ -1384,9 +1388,9 @@ function CheckoutColumn(props: {
                   taxInclusive,
                 }).total
                 return (
-                  <li key={line.productId} className="px-3 py-2">
+                  <li key={line.productId} className="px-2.5 py-2">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium">
                           {line.name}
                         </p>
@@ -1396,20 +1400,7 @@ function CheckoutColumn(props: {
                             currencyCode,
                             currencyLocale
                           )}
-                          {line.trackInventory
-                            ? ` · avail ${line.stockQty}`
-                            : ""}
                         </p>
-                        {overStock ? (
-                          <p className="text-[11px] text-amber-700 dark:text-amber-300">
-                            Qty exceeds displayed stock
-                          </p>
-                        ) : null}
-                        {discountOver ? (
-                          <p className="text-[11px] text-amber-700 dark:text-amber-300">
-                            Discount exceeds cashier max ({maxDiscountPctUi}%)
-                          </p>
-                        ) : null}
                       </div>
                       <button
                         type="button"
@@ -1424,7 +1415,7 @@ function CheckoutColumn(props: {
                         <Trash2 className="size-3.5" aria-hidden />
                       </button>
                     </div>
-                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    <div className="mt-1.5 flex items-center gap-1">
                       <Button
                         type="button"
                         size="icon-sm"
@@ -1437,16 +1428,9 @@ function CheckoutColumn(props: {
                       >
                         <Minus className="size-3" aria-hidden />
                       </Button>
-                      <Input
-                        className="h-7 w-12 px-1 text-center text-sm"
-                        inputMode="decimal"
-                        value={String(line.quantity)}
-                        onChange={(e) => {
-                          const n = Number(e.target.value)
-                          if (Number.isFinite(n)) updateQty(line.productId, n)
-                        }}
-                        aria-label={`Quantity of ${line.name}`}
-                      />
+                      <span className="w-8 text-center text-sm font-semibold tabular-nums">
+                        {line.quantity}
+                      </span>
                       <Button
                         type="button"
                         size="icon-sm"
@@ -1460,9 +1444,9 @@ function CheckoutColumn(props: {
                         <Plus className="size-3" aria-hidden />
                       </Button>
                       <Input
-                        className="h-7 w-20 text-sm"
+                        className="ml-1 h-7 w-16 text-xs"
                         inputMode="decimal"
-                        placeholder="Disc."
+                        placeholder="Disc"
                         value={
                           line.discountAmount ? String(line.discountAmount) : ""
                         }
@@ -1490,26 +1474,148 @@ function CheckoutColumn(props: {
         </div>
       </div>
 
-      {/* Totals + payment — fixed footer */}
-      <div className="shrink-0 border-t bg-background px-3 py-2.5">
-        <PaymentPanel
-          pending={pending}
-          paymentLines={paymentLines}
-          setPaymentLines={setPaymentLines}
-          grand={displayGrand}
-          merchandise={totals.merchandise}
-          discountTotal={totals.discountTotal}
-          subtotal={totals.subtotal}
-          taxTotal={totals.taxTotal}
-          paymentPreview={paymentPreview}
-          currencyCode={currencyCode}
-          currencyLocale={currencyLocale}
-          onComplete={onComplete}
-          onHold={onHold}
-          completeLabel={`Complete sale · ${formatCurrency(displayGrand, currencyCode, currencyLocale)}`}
-          maxDiscountPctUi={maxDiscountPctUi}
-          discountWarn={totals.discountWarn}
+      {/* Summary + CTA — reference style, fixed bottom */}
+      <div className="shrink-0 space-y-2.5 border-t px-3 py-3">
+        <div className="space-y-1 text-sm">
+          <div className="flex justify-between gap-3">
+            <span className="text-muted-foreground">Total quantity</span>
+            <span className="font-semibold tabular-nums">{cartQty}</span>
+          </div>
+          {totals.discountTotal > 0.001 ? (
+            <div className="flex justify-between gap-3">
+              <span className="text-muted-foreground">Discount</span>
+              <span className="font-medium tabular-nums text-amber-700 dark:text-amber-300">
+                −
+                {formatCurrency(
+                  totals.discountTotal,
+                  currencyCode,
+                  currencyLocale
+                )}
+              </span>
+            </div>
+          ) : null}
+          <div className="flex justify-between gap-3">
+            <span className="text-muted-foreground">
+              Tax{taxEnabled ? "" : ""}
+            </span>
+            <span className="font-medium tabular-nums">
+              {formatCurrency(totals.taxTotal, currencyCode, currencyLocale)}
+            </span>
+          </div>
+          <div className="flex items-baseline justify-between gap-3 border-t pt-2">
+            <span className="text-sm font-semibold">Total amount</span>
+            <span className="font-heading text-2xl font-bold tracking-tight text-emerald-600 tabular-nums dark:text-emerald-400">
+              {formatCurrency(displayGrand, currencyCode, currencyLocale)}
+            </span>
+          </div>
+        </div>
+
+        {totals.discountWarn ? (
+          <p className="text-[11px] text-amber-700 dark:text-amber-300">
+            A line discount exceeds cashier max ({maxDiscountPctUi}%).
+          </p>
+        ) : null}
+
+        <Input
+          className="h-9"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Sale notes (optional)"
+          aria-label="Sale notes"
         />
+
+        {primaryPay.method === "cash" ? (
+          <div className="space-y-1">
+            <label
+              htmlFor="pos-tendered"
+              className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase"
+            >
+              Cash tendered
+            </label>
+            <Input
+              id="pos-tendered"
+              className="h-9"
+              inputMode="decimal"
+              value={primaryPay.tendered}
+              onChange={(e) =>
+                setPaymentLines([
+                  { ...primaryPay, tendered: e.target.value, amount: "" },
+                ])
+              }
+              placeholder="0.00"
+            />
+            {(() => {
+              const t = Number(primaryPay.tendered)
+              if (!Number.isFinite(t) || t <= 0) return null
+              const change = roundMoney(t - displayGrand)
+              return (
+                <p
+                  className={cn(
+                    "text-sm font-semibold tabular-nums",
+                    change >= 0
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-destructive"
+                  )}
+                >
+                  {change >= 0 ? "Change " : "Short "}
+                  {formatCurrency(Math.abs(change), currencyCode, currencyLocale)}
+                </p>
+              )
+            })()}
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <label
+              htmlFor="pos-pay-amount"
+              className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase"
+            >
+              Amount (blank = full total)
+            </label>
+            <Input
+              id="pos-pay-amount"
+              className="h-9"
+              inputMode="decimal"
+              value={primaryPay.amount}
+              onChange={(e) =>
+                setPaymentLines([
+                  { ...primaryPay, amount: e.target.value, tendered: "" },
+                ])
+              }
+              placeholder={formatCurrency(
+                displayGrand,
+                currencyCode,
+                currencyLocale
+              )}
+            />
+          </div>
+        )}
+
+        <Button
+          type="button"
+          className="h-11 w-full text-sm font-semibold"
+          disabled={pending || displayGrand <= 0}
+          aria-busy={pending}
+          onClick={onComplete}
+        >
+          {pending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              Completing…
+            </>
+          ) : (
+            `Complete sale · ${formatCurrency(displayGrand, currencyCode, currencyLocale)}`
+          )}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-9 w-full"
+          disabled={pending || cart.length === 0}
+          onClick={onHold}
+        >
+          <Pause className="size-3.5" aria-hidden />
+          Hold sale
+        </Button>
       </div>
     </div>
   )
