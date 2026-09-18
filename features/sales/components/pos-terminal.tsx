@@ -26,6 +26,7 @@ import {
   LayoutGrid,
   List,
   ArrowRight,
+  CircleCheck,
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -63,6 +64,14 @@ import {
 } from "@/lib/inventory/constants"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button, buttonVariants } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
@@ -561,7 +570,6 @@ export function PosTerminal({
       setCart([])
       setNotes("")
       setPaymentLines([newPaymentLine("cash")])
-      toast.success("Sale completed")
     })
   }
 
@@ -664,7 +672,6 @@ export function PosTerminal({
       })
       setResume(null)
       setPaymentLines([newPaymentLine("cash")])
-      toast.success("Held sale completed")
     })
   }
 
@@ -804,36 +811,69 @@ export function PosTerminal({
       data-shop-id={shopId}
     >
       {success ? (
-        <div className="shrink-0 border-b bg-background px-4 py-3 md:px-5">
-          <Alert className="border-accent/30 bg-accent/5">
-            <AlertDescription className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <span>
+        <Dialog
+          open
+          disablePointerDismissal
+          onOpenChange={(open, details) => {
+            // Static backdrop: ignore outside click / Escape — only Close button
+            // (closePress) or our action buttons may dismiss.
+            if (!open && details.reason === "closePress") {
+              setSuccess(undefined)
+            }
+          }}
+        >
+          <DialogContent
+            className="sm:max-w-md"
+            showCloseButton
+          >
+            <DialogHeader className="items-center text-center sm:items-center">
+              <div className="mb-1 flex size-12 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <CircleCheck className="size-7" aria-hidden />
+              </div>
+              <DialogTitle className="text-lg">Sale completed</DialogTitle>
+              <DialogDescription className="text-center">
                 Sale {success.saleNumber ?? success.id.slice(0, 8)} ·{" "}
                 {formatCurrency(success.total, currencyCode, currencyLocale)}
                 {success.changeAmount > 0
                   ? ` · Change ${formatCurrency(success.changeAmount, currencyCode, currencyLocale)}`
                   : ""}
-              </span>
-              <span className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" onClick={clearCart}>
-                  New sale
-                </Button>
-                <Link
-                  href={saleReceiptPath(success.id)}
-                  className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                >
-                  Print receipt
-                </Link>
-                <Link
-                  href={salePath(success.id)}
-                  className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                >
-                  View sale
-                </Link>
-              </span>
-            </AlertDescription>
-          </Alert>
-        </div>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="sm:justify-stretch sm:flex-col sm:gap-2">
+              <Button
+                type="button"
+                className="w-full"
+                onClick={() => {
+                  clearCart()
+                }}
+              >
+                New sale
+              </Button>
+              <Link
+                href={saleReceiptPath(success.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "w-full"
+                )}
+                onClick={() => setSuccess(undefined)}
+              >
+                Print receipt
+              </Link>
+              <Link
+                href={salePath(success.id)}
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "w-full"
+                )}
+                onClick={() => setSuccess(undefined)}
+              >
+                View sale
+              </Link>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       ) : null}
 
       {error ? (
