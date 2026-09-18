@@ -816,8 +816,8 @@ export function PosTerminal({
           disablePointerDismissal
           onOpenChange={(open, details) => {
             // Static backdrop: ignore outside click / Escape — only Close button
-            // (closePress) or our action buttons may dismiss.
-            if (!open && details.reason === "closePress") {
+            // (close-press) or our action buttons may dismiss.
+            if (!open && details.reason === "close-press") {
               setSuccess(undefined)
             }
           }}
