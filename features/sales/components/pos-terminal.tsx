@@ -756,7 +756,7 @@ export function PosTerminal({
 
   return (
     <div
-      className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-muted/30"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-muted/30"
       data-shop-id={shopId}
     >
       <div className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-4 py-2.5 md:px-5">
@@ -908,9 +908,9 @@ export function PosTerminal({
           </aside>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
+        <div className="grid min-h-0 min-w-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
           {/* Product discovery */}
-          <section className="flex min-h-0 flex-col overflow-hidden p-3 md:p-4">
+          <section className="flex min-h-0 min-w-0 flex-col overflow-hidden p-3 md:p-4">
             <div className="relative shrink-0">
               <Search
                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
@@ -937,7 +937,7 @@ export function PosTerminal({
               Scanner works when search is not focused · Enter to look up barcode
             </p>
 
-            <div className="mt-2 min-h-0 flex-1 overflow-auto">
+            <div className="mt-2 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
               {searching ? (
                 <div
                   className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center"
@@ -962,18 +962,18 @@ export function PosTerminal({
                   </p>
                 </div>
               ) : (
-                <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                <ul className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-2 sm:grid-cols-[repeat(3,minmax(0,1fr))] xl:grid-cols-[repeat(4,minmax(0,1fr))] 2xl:grid-cols-[repeat(5,minmax(0,1fr))]">
                   {results.map((p) => {
                     const out =
                       p.track_inventory &&
                       (p.stock_status === "out_of_stock" ||
                         Number(p.quantity ?? 0) <= 0)
                     return (
-                      <li key={p.product_id}>
+                      <li key={p.product_id} className="min-w-0">
                         <button
                           type="button"
                           className={cn(
-                            "flex w-full items-start gap-3 rounded-xl border bg-card p-2.5 text-left transition",
+                            "flex w-full min-w-0 flex-col overflow-hidden rounded-xl border bg-card text-left transition",
                             "hover:border-foreground/25 hover:bg-muted/40 focus-visible:ring-2 focus-visible:ring-ring",
                             out && "opacity-60"
                           )}
@@ -984,20 +984,23 @@ export function PosTerminal({
                             searchRef.current?.focus()
                           }}
                         >
-                          <ProductThumbnail
-                            src={p.primary_image_url}
-                            alt=""
-                            size="pos"
-                          />
-                          <span className="min-w-0 flex-1">
+                          <span className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-muted/40">
+                            <ProductThumbnail
+                              src={p.primary_image_url}
+                              alt=""
+                              size="fill"
+                              className="rounded-none border-0 bg-transparent"
+                            />
+                          </span>
+                          <span className="min-w-0 space-y-1 p-2.5">
                             <span className="line-clamp-2 text-sm font-medium leading-snug">
                               {p.name}
                             </span>
-                            <span className="mt-0.5 block truncate font-mono text-[11px] text-muted-foreground">
+                            <span className="block truncate font-mono text-[11px] text-muted-foreground">
                               {p.sku}
                             </span>
-                            <span className="mt-1.5 flex items-baseline justify-between gap-2">
-                              <span className="text-sm font-semibold tabular-nums">
+                            <span className="flex items-baseline justify-between gap-1">
+                              <span className="truncate text-sm font-semibold tabular-nums">
                                 {formatCurrency(
                                   Number(p.selling_price),
                                   currencyCode,
@@ -1006,7 +1009,7 @@ export function PosTerminal({
                               </span>
                               <span
                                 className={cn(
-                                  "text-[11px] font-medium",
+                                  "shrink-0 text-[10px] font-medium",
                                   stockTone(p)
                                 )}
                               >

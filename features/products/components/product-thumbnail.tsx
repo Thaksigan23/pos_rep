@@ -11,7 +11,7 @@ export function ProductThumbnail({
 }: {
   src?: string | null
   alt: string
-  size?: "sm" | "md" | "lg" | "pos" | "catalog" | "inventory"
+  size?: "sm" | "md" | "lg" | "pos" | "catalog" | "inventory" | "fill"
   className?: string
   /** Skip lazy-load for above-the-fold primary images. */
   priority?: boolean
@@ -25,14 +25,17 @@ export function ProductThumbnail({
           ? "size-10"
           : size === "pos"
             ? "size-[3.5rem]"
-            : size === "lg"
-              ? "size-40"
-              : "size-12"
+            : size === "fill"
+              ? "size-full"
+              : size === "lg"
+                ? "size-40"
+                : "size-12"
 
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden rounded-lg border border-border/70 bg-neutral-50",
+        "relative overflow-hidden rounded-lg border border-border/70 bg-neutral-50",
+        size === "fill" ? "min-h-0 min-w-0" : "shrink-0",
         dim,
         className
       )}
