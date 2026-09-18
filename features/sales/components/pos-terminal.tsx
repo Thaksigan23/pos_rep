@@ -207,8 +207,10 @@ export function PosTerminal({
 }) {
   const [pending, startTransition] = useTransition()
   const searchRef = useRef<HTMLInputElement>(null)
+  const searchRequestId = useRef(0)
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<PosProduct[]>([])
+  const [searching, setSearching] = useState(false)
   const [cart, setCart] = useState<CartLine[]>([])
   const [customer, setCustomer] = useState<CustomerOption | null>(
     walkInCustomer
@@ -312,20 +314,30 @@ export function PosTerminal({
   }, [paymentLines, displayGrand])
 
   const runSearch = useCallback((q: string) => {
+    const requestId = ++searchRequestId.current
+    setSearching(true)
     startTransition(async () => {
-      const result = await searchPosProductsAction(q)
-      if ("error" in result) {
-        toast.error(result.error)
-        return
+      try {
+        const result = await searchPosProductsAction(q)
+        if (requestId !== searchRequestId.current) return
+        if ("error" in result) {
+          toast.error(result.error)
+          return
+        }
+        setResults(result.rows)
+      } finally {
+        if (requestId === searchRequestId.current) setSearching(false)
       }
-      setResults(result.rows)
     })
   }, [])
 
   useEffect(() => {
     const t = setTimeout(() => {
       if (query.trim().length >= 1) runSearch(query)
-      else setResults([])
+      else {
+        setResults([])
+        setSearching(false)
+      }
     }, 250)
     return () => clearTimeout(t)
   }, [query, runSearch])
@@ -926,7 +938,22 @@ export function PosTerminal({
             </p>
 
             <div className="mt-3 min-h-0 flex-1 overflow-auto">
-              {results.length === 0 ? (
+              {searching ? (
+                <div
+                  className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center"
+                  aria-busy="true"
+                  aria-live="polite"
+                >
+                  <Loader2
+                    className="mb-2 size-8 animate-spin text-muted-foreground"
+                    aria-hidden
+                  />
+                  <p className="text-sm font-medium">Update is coming…</p>
+                  <p className="mt-1 max-w-xs text-xs text-muted-foreground">
+                    Loading products for your search.
+                  </p>
+                </div>
+              ) : results.length === 0 ? (
                 <div className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center">
                   <ScanBarcode className="mb-2 size-8 text-muted-foreground/50" aria-hidden />
                   <p className="text-sm font-medium">Ready to scan</p>

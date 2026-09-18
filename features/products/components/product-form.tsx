@@ -113,6 +113,9 @@ export function ProductForm({
           ? Number(values.costPrice)
           : null,
     }
+    toast.message(
+      mode === "create" ? "Creating product…" : "Update is coming…"
+    )
     startTransition(async () => {
       const result =
         mode === "create"
@@ -360,9 +363,15 @@ export function ProductForm({
         </div>
       </FieldGroup>
 
-      <Button type="submit" disabled={pending} className="h-10 px-4">
+      <Button type="submit" disabled={pending} className="h-10 px-4" aria-busy={pending}>
         {pending ? <Loader2 className="size-4 animate-spin" /> : null}
-        {mode === "create" ? "Create product" : "Save product"}
+        {pending
+          ? mode === "create"
+            ? "Creating…"
+            : "Update is coming…"
+          : mode === "create"
+            ? "Create product"
+            : "Save product"}
       </Button>
     </form>
   )
