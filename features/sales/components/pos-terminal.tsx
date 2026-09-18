@@ -843,7 +843,7 @@ export function PosTerminal({
       ) : null}
 
       {resume ? (
-        <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[minmax(0,1.9fr)_minmax(20rem,1fr)]">
+        <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(26rem,1.15fr)] xl:grid-cols-[minmax(0,1fr)_minmax(30rem,1.25fr)]">
           <div className="space-y-3 overflow-auto p-4 md:p-5">
             <div className="flex items-center justify-between gap-2">
               <div>
@@ -908,7 +908,7 @@ export function PosTerminal({
           </aside>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1.95fr)_minmax(22rem,1fr)] xl:grid-cols-[minmax(0,2fr)_minmax(24rem,1fr)]">
+        <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(26rem,1.15fr)] xl:grid-cols-[minmax(0,1fr)_minmax(30rem,1.25fr)]">
           {/* Product discovery */}
           <section className="flex min-h-0 flex-col p-3 md:p-4 lg:p-5">
             <div className="relative shrink-0">
@@ -962,7 +962,7 @@ export function PosTerminal({
                   </p>
                 </div>
               ) : (
-                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-2">
                   {results.map((p) => {
                     const out =
                       p.track_inventory &&
