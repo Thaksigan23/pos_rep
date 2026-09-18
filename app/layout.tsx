@@ -1,15 +1,16 @@
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
-import { Geist } from "next/font/google"
+import { Inter } from "next/font/google"
 
 import { AppProviders } from "@/components/providers/app-providers"
 import { cn } from "@/lib/utils"
 
 import "./globals.css"
 
-const geist = Geist({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -22,7 +23,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn("font-sans antialiased", inter.variable)}
+      suppressHydrationWarning
+    >
       <body>
         <AppProviders>{children}</AppProviders>
       </body>

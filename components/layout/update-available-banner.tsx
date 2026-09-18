@@ -69,7 +69,7 @@ export function UpdateAvailableBanner() {
       role="status"
       className="fixed inset-x-0 bottom-0 z-50 flex justify-center p-3 pointer-events-none sm:bottom-4 sm:justify-end sm:p-0 sm:pr-4"
     >
-      <div className="pointer-events-auto flex max-w-md items-center gap-3 rounded-xl border border-amber-500/40 bg-background px-3 py-2.5 shadow-lg">
+      <div className="pointer-events-auto flex max-w-md items-center gap-3 rounded-lg border border-primary/30 bg-background px-3 py-2.5 shadow-none">
         <div className="min-w-0">
           <p className="text-sm font-semibold">Update available</p>
           <p className="text-xs text-muted-foreground">

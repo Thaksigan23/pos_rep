@@ -38,6 +38,8 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -47,95 +49,110 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+  POS Pro — Modern retail interface (flat)
+  Primary #2563eb · Secondary #64748b · Accent #10b981
+  Background #ffffff · Text #0f172a · Muted #f1f5f9
+  Fonts: Inter (heading + body)
+*/
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --background: #ffffff;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --secondary: #f1f5f9;
+    --secondary-foreground: #64748b;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #10b981;
+    --accent-foreground: #ffffff;
+    --success: #10b981;
+    --success-foreground: #ffffff;
+    --destructive: #ef4444;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #2563eb;
+    --chart-1: #2563eb;
+    --chart-2: #10b981;
+    --chart-3: #64748b;
+    --chart-4: #3b82f6;
+    --chart-5: #34d399;
+    --radius: 0.5rem;
+    --sidebar: #0f172a;
+    --sidebar-foreground: #f8fafc;
+    --sidebar-primary: #2563eb;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1e293b;
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: #1e293b;
+    --sidebar-ring: #2563eb;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #0f172a;
+    --foreground: #f8fafc;
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+    --popover: #1e293b;
+    --popover-foreground: #f8fafc;
+    --primary: #3b82f6;
+    --primary-foreground: #0f172a;
+    --secondary: #1e293b;
+    --secondary-foreground: #94a3b8;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+    --accent: #10b981;
+    --accent-foreground: #052e16;
+    --success: #34d399;
+    --success-foreground: #052e16;
+    --destructive: #f87171;
+    --border: #334155;
+    --input: #334155;
+    --ring: #3b82f6;
+    --chart-1: #3b82f6;
+    --chart-2: #34d399;
+    --chart-3: #94a3b8;
+    --chart-4: #60a5fa;
+    --chart-5: #6ee7b7;
+    --sidebar: #020617;
+    --sidebar-foreground: #f8fafc;
+    --sidebar-primary: #3b82f6;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #1e293b;
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: #1e293b;
+    --sidebar-ring: #3b82f6;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
-  /* Visible focus for keyboard users (components still set ring where needed) */
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-heading {
+    font-family: var(--font-sans);
+  }
   :focus-visible {
     @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
   }
 }
 
 @layer components {
-  /* Phase 11 design foundation — shared layout / density helpers */
   .page-main {
-    @apply flex-1 px-4 py-5 md:px-6 md:py-6 lg:px-8;
+    @apply flex-1 bg-muted/40 px-4 py-5 md:px-6 md:py-6 lg:px-8;
   }
   .page-stack {
     @apply space-y-6;
@@ -144,7 +161,7 @@
     @apply space-y-4;
   }
   .panel {
-    @apply rounded-xl border bg-card text-card-foreground shadow-none;
+    @apply rounded-lg border border-border bg-card text-card-foreground shadow-none;
   }
   .panel-pad {
     @apply p-4 md:p-5;
@@ -159,10 +176,10 @@
     @apply text-xs text-muted-foreground;
   }
   .heading-page {
-    @apply font-heading text-xl font-semibold tracking-tight md:text-2xl;
+    @apply font-heading text-xl font-semibold tracking-tight text-foreground md:text-2xl;
   }
   .heading-section {
-    @apply font-heading text-base font-semibold tracking-tight;
+    @apply font-heading text-base font-semibold tracking-tight text-foreground;
   }
   .control-h {
     @apply h-10;
@@ -180,14 +197,16 @@
     @apply text-right tabular-nums;
   }
   .brand-accent {
-    @apply bg-amber-400 text-zinc-950;
+    @apply bg-primary text-primary-foreground;
   }
   .brand-accent-soft {
-    @apply bg-amber-400/15 text-amber-700 dark:text-amber-300;
+    @apply bg-primary/10 text-primary;
   }
-  /* Restrained active nav — obvious without full amber fill */
   .nav-active {
-    @apply bg-background/12 font-medium text-background;
-    box-shadow: inset 3px 0 0 0 #fbbf24;
+    @apply bg-sidebar-accent font-medium text-sidebar-foreground;
+    box-shadow: inset 3px 0 0 0 var(--sidebar-primary);
+  }
+  .pos-total {
+    @apply font-heading text-2xl font-bold tracking-tight text-accent tabular-nums;
   }
 }

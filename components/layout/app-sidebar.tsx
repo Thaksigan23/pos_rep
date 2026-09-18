@@ -38,9 +38,9 @@ function NavLink({
     collapsed && "justify-center px-0",
     active
       ? collapsed
-        ? "bg-background/15 text-background ring-1 ring-amber-400/80 font-medium"
+        ? "bg-sidebar-accent text-sidebar-foreground ring-1 ring-sidebar-primary font-medium"
         : "nav-active"
-      : "text-background/75 hover:bg-background/10 hover:text-background"
+      : "text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-foreground"
   )
 
   const link = (
@@ -97,10 +97,10 @@ export function AppSidebar({
   const isCollapsed = Boolean(collapsed)
 
   return (
-    <div className="flex h-full flex-col bg-foreground text-background">
+    <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div
         className={cn(
-          "flex items-center gap-2.5 border-b border-background/10 px-3 py-3.5",
+          "flex items-center gap-2.5 border-b border-sidebar-border px-3 py-3.5",
           isCollapsed && "flex-col gap-2 px-2"
         )}
       >
@@ -119,7 +119,7 @@ export function AppSidebar({
           />
           {!isCollapsed ? (
             <div className="min-w-0 flex-1 pr-1">
-              <p className="truncate text-[10px] font-medium tracking-[0.14em] text-background/55 uppercase">
+              <p className="truncate text-[10px] font-medium tracking-[0.14em] text-sidebar-foreground/55 uppercase">
                 MobilePOS
               </p>
               <p
@@ -135,7 +135,7 @@ export function AppSidebar({
           <button
             type="button"
             onClick={onToggle}
-            className="hidden size-8 shrink-0 items-center justify-center rounded-md text-background/70 transition hover:bg-background/10 hover:text-background md:flex"
+            className="hidden size-8 shrink-0 items-center justify-center rounded-md text-sidebar-foreground/70 transition hover:bg-sidebar-accent hover:text-sidebar-foreground md:flex"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             aria-expanded={!isCollapsed}
           >
@@ -152,7 +152,7 @@ export function AppSidebar({
           {sections.map((section) => (
             <div key={section.id}>
               {!isCollapsed ? (
-                <p className="px-2.5 pb-1.5 text-[10px] font-medium tracking-[0.14em] text-background/40 uppercase">
+                <p className="px-2.5 pb-1.5 text-[10px] font-medium tracking-[0.14em] text-sidebar-foreground/40 uppercase">
                   {section.label}
                 </p>
               ) : (
@@ -186,7 +186,7 @@ export function AppSidebar({
 
       <div
         className={cn(
-          "border-t border-background/10 p-2.5",
+          "border-t border-sidebar-border p-2.5",
           isCollapsed && "flex justify-center"
         )}
       >

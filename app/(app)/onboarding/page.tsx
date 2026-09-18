@@ -34,26 +34,26 @@ export default async function OnboardingPage() {
 
   return (
     <div className="grid min-h-svh lg:grid-cols-[1fr_1.1fr]">
-      <aside className="relative hidden bg-foreground text-background lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <aside className="relative hidden bg-sidebar text-sidebar-foreground lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-amber-400 text-foreground">
+          <div className="flex size-10 items-center justify-center rounded-lg brand-accent">
             <Smartphone className="size-5" />
           </div>
           <div>
             <p className="text-sm font-medium">MobilePOS</p>
-            <p className="text-xs text-background/60">First counter setup</p>
+            <p className="text-xs text-sidebar-foreground/60">First counter setup</p>
           </div>
         </div>
         <div className="max-w-md space-y-3">
           <h1 className="font-heading text-4xl leading-tight tracking-tight">
             Open the shop before the first ticket.
           </h1>
-          <p className="text-sm leading-6 text-background/70">
+          <p className="text-sm leading-6 text-sidebar-foreground/70">
             We create the organization and main shop on the server. Your browser
             cannot assign itself Owner.
           </p>
         </div>
-        <p className="text-xs text-background/40">Owner bootstrap only</p>
+        <p className="text-xs text-sidebar-foreground/40">Owner bootstrap only</p>
       </aside>
       <main className="flex items-center justify-center bg-background p-6 sm:p-10">
         <div className="w-full max-w-md space-y-8">

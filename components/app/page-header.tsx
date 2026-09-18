@@ -28,7 +28,7 @@ export function PageHeader({
         ) : null}
         <div className="mt-1 flex items-center gap-3">
           {Icon ? (
-            <div className="hidden size-10 items-center justify-center rounded-xl bg-foreground text-background sm:flex">
+            <div className="hidden size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground sm:flex">
               <Icon className="size-5" />
             </div>
           ) : null}

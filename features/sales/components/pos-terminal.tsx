@@ -1329,8 +1329,8 @@ function CheckoutColumn(props: {
               className={cn(
                 "h-9 rounded-lg border text-xs font-semibold transition",
                 primaryPay.method === m
-                  ? "border-foreground bg-foreground text-background"
-                  : "bg-card text-foreground hover:bg-muted/60"
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "bg-card text-foreground hover:bg-muted"
               )}
               onClick={() =>
                 setPaymentLines([
@@ -1507,7 +1507,7 @@ function CheckoutColumn(props: {
           </div>
           <div className="flex items-baseline justify-between gap-3 border-t pt-2">
             <span className="text-sm font-semibold">Total amount</span>
-            <span className="font-heading text-2xl font-bold tracking-tight text-emerald-600 tabular-nums dark:text-emerald-400">
+            <span className="font-heading text-2xl font-bold tracking-tight text-accent tabular-nums">
               {formatCurrency(displayGrand, currencyCode, currencyLocale)}
             </span>
           </div>

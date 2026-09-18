@@ -50,13 +50,13 @@ export function UserMenu({
             variant="ghost"
             className={cn(
               "h-11 gap-2 px-2 text-left",
-              compact ? "w-full justify-start text-background hover:bg-background/10 hover:text-background" : ""
+              compact ? "w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground" : ""
             )}
           />
         }
       >
         <Avatar size="sm">
-          <AvatarFallback className="bg-amber-500/20 text-xs font-medium text-amber-950 dark:text-amber-100">
+          <AvatarFallback className="bg-primary/15 text-xs font-medium text-primary">
             {letters}
           </AvatarFallback>
         </Avatar>
@@ -73,7 +73,7 @@ export function UserMenu({
         ) : (
           <span className="min-w-0 flex-1 text-left">
             <span className="block truncate text-sm font-medium">{name}</span>
-            <span className="block truncate text-xs text-background/60">
+            <span className="block truncate text-xs text-sidebar-foreground/60">
               {ROLE_LABELS[session.role]}
             </span>
           </span>
