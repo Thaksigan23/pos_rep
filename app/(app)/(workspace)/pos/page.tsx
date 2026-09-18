@@ -20,7 +20,7 @@ export default async function PosPage() {
     .maybeSingle()
 
   return (
-    <div className="-mx-4 -my-5 flex min-h-[calc(100svh-3.5rem)] flex-col md:-mx-6 md:-my-6 lg:-mx-8">
+    <div className="-mx-4 -my-5 flex h-[calc(100svh-3.5rem)] flex-col overflow-hidden md:-mx-6 md:-my-6 lg:-mx-8">
       <PosTerminal
         walkInCustomer={walkInCustomer}
         shopId={session.shop.id}

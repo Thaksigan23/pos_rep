@@ -756,7 +756,7 @@ export function PosTerminal({
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col bg-muted/30"
+      className="flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-muted/30"
       data-shop-id={shopId}
     >
       <div className="flex shrink-0 items-center justify-between gap-3 border-b bg-background px-4 py-2.5 md:px-5">
@@ -843,8 +843,8 @@ export function PosTerminal({
       ) : null}
 
       {resume ? (
-        <div className="grid min-h-0 flex-1 gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(26rem,1.15fr)] xl:grid-cols-[minmax(0,1fr)_minmax(30rem,1.25fr)]">
-          <div className="space-y-3 overflow-auto p-4 md:p-5">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(32rem,1.3fr)]">
+          <div className="min-h-0 space-y-3 overflow-auto p-4">
             <div className="flex items-center justify-between gap-2">
               <div>
                 <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
@@ -884,8 +884,8 @@ export function PosTerminal({
               ))}
             </ul>
           </div>
-          <aside className="flex min-h-0 flex-col border-t bg-background lg:sticky lg:top-0 lg:h-[calc(100svh-3.5rem-3.25rem)] lg:border-t-0 lg:border-l">
-            <div className="min-h-0 flex-1 overflow-auto p-4">
+          <aside className="flex min-h-0 flex-col overflow-hidden border-t bg-background lg:border-t-0 lg:border-l">
+            <div className="min-h-0 flex-1 overflow-hidden p-3">
               <PaymentPanel
                 pending={pending}
                 paymentLines={paymentLines}
@@ -908,9 +908,9 @@ export function PosTerminal({
           </aside>
         </div>
       ) : (
-        <div className="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_minmax(26rem,1.15fr)] xl:grid-cols-[minmax(0,1fr)_minmax(30rem,1.25fr)]">
+        <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[minmax(0,1fr)_minmax(28rem,1.2fr)] xl:grid-cols-[minmax(0,1fr)_minmax(32rem,1.3fr)]">
           {/* Product discovery */}
-          <section className="flex min-h-0 flex-col p-3 md:p-4 lg:p-5">
+          <section className="flex min-h-0 flex-col overflow-hidden p-3 md:p-4">
             <div className="relative shrink-0">
               <Search
                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
@@ -925,7 +925,7 @@ export function PosTerminal({
                 onBlur={() => setSearchFocused(false)}
                 onKeyDown={onSearchKeyDown}
                 placeholder="Search products, SKU or scan barcode…"
-                className="control-h h-11 border-foreground/15 bg-background pr-11 pl-10 text-base shadow-sm md:text-sm"
+                className="control-h h-10 border-foreground/15 bg-background pr-11 pl-10 text-base shadow-sm md:text-sm"
                 aria-label="Search products or scan barcode"
               />
               <ScanBarcode
@@ -933,11 +933,11 @@ export function PosTerminal({
                 aria-hidden
               />
             </div>
-            <p className="mt-1.5 shrink-0 text-[11px] text-muted-foreground">
-              Barcode scanner works while search is not focused. Press Enter to look up.
+            <p className="mt-1 shrink-0 text-[11px] text-muted-foreground">
+              Scanner works when search is not focused · Enter to look up barcode
             </p>
 
-            <div className="mt-3 min-h-0 flex-1 overflow-auto">
+            <div className="mt-2 min-h-0 flex-1 overflow-auto">
               {searching ? (
                 <div
                   className="flex h-40 flex-col items-center justify-center rounded-xl border border-dashed bg-card/50 px-4 text-center"
@@ -1023,8 +1023,8 @@ export function PosTerminal({
             </div>
           </section>
 
-          {/* Desktop checkout */}
-          <aside className="hidden min-h-0 flex-col border-l bg-background lg:sticky lg:top-0 lg:flex lg:h-[calc(100svh-3.5rem-3.25rem)]">
+          {/* Desktop checkout — fills remaining height, no page scroll */}
+          <aside className="hidden min-h-0 flex-col overflow-hidden border-l bg-background lg:flex">
             <CheckoutColumn {...checkoutProps} />
           </aside>
         </div>
@@ -1209,144 +1209,163 @@ function CheckoutColumn(props: {
   } = props
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 space-y-3 overflow-auto p-3 md:p-4">
-        {/* Customer — compact */}
-        <div className="rounded-xl border bg-card p-3">
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                Customer
-              </p>
-              <p className="truncate text-sm font-semibold">
-                {customer ? customerName(customer) : "None selected"}
-              </p>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      {/* Customer — compact, fixed */}
+      <div className="shrink-0 border-b px-3 py-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+              Customer
+            </p>
+            <p className="truncate text-sm font-semibold leading-tight">
+              {customer ? customerName(customer) : "None selected"}
               {customer?.phone ? (
-                <p className="truncate text-xs text-muted-foreground">
-                  {customer.phone}
-                </p>
+                <span className="font-normal text-muted-foreground">
+                  {" "}
+                  · {customer.phone}
+                </span>
               ) : null}
-            </div>
-            <div className="flex shrink-0 gap-1.5">
-              {walkInCustomer ? (
-                <Button
-                  type="button"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                  variant={customer?.is_walk_in ? "default" : "outline"}
-                  onClick={() =>
-                    setCustomer({
-                      id: walkInCustomer.id,
-                      first_name: walkInCustomer.first_name,
-                      last_name: walkInCustomer.last_name,
-                      phone: walkInCustomer.phone,
-                      is_walk_in: true,
-                    })
-                  }
-                >
-                  Walk-in
-                </Button>
-              ) : null}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-1">
+            {walkInCustomer ? (
               <Button
                 type="button"
                 size="sm"
                 className="h-7 px-2 text-xs"
-                variant="outline"
-                onClick={() => setShowNewCustomer((v) => !v)}
+                variant={customer?.is_walk_in ? "default" : "outline"}
+                onClick={() =>
+                  setCustomer({
+                    id: walkInCustomer.id,
+                    first_name: walkInCustomer.first_name,
+                    last_name: walkInCustomer.last_name,
+                    phone: walkInCustomer.phone,
+                    is_walk_in: true,
+                  })
+                }
               >
-                New
+                Walk-in
               </Button>
-            </div>
+            ) : null}
+            <Button
+              type="button"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              variant="outline"
+              onClick={() => setShowNewCustomer((v) => !v)}
+            >
+              New
+            </Button>
           </div>
-          <Input
-            className="mt-2 h-8 text-sm"
-            value={customerQ}
-            onChange={(e) => setCustomerQ(e.target.value)}
-            placeholder="Search customers…"
-            aria-label="Search customers"
-          />
-          {customerResults.length > 0 ? (
-            <ul className="mt-1.5 max-h-28 overflow-auto rounded-lg border">
-              {customerResults.map((c) => (
-                <li key={c.id}>
-                  <button
-                    type="button"
-                    className="w-full px-2.5 py-1.5 text-left text-sm hover:bg-muted/60"
-                    onClick={() => {
-                      setCustomer(c)
-                      setCustomerQ("")
-                      setCustomerResults([])
-                    }}
-                  >
-                    {customerName(c)}
-                    {c.phone ? ` · ${c.phone}` : ""}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {showNewCustomer ? (
-            <div className="mt-2 space-y-1.5 rounded-lg border p-2">
-              <Input
-                className="h-8"
-                placeholder="First name"
-                value={newFirst}
-                onChange={(e) => setNewFirst(e.target.value)}
-              />
-              <Input
-                className="h-8"
-                placeholder="Last name"
-                value={newLast}
-                onChange={(e) => setNewLast(e.target.value)}
-              />
-              <Input
-                className="h-8"
-                placeholder="Phone"
-                value={newPhone}
-                onChange={(e) => setNewPhone(e.target.value)}
-              />
-              <Button
-                type="button"
-                size="sm"
-                className="h-8"
-                disabled={pending || !newFirst.trim()}
-                onClick={createCustomer}
-              >
-                Save customer
-              </Button>
-            </div>
-          ) : null}
         </div>
+        <Input
+          className="mt-1.5 h-8 text-sm"
+          value={customerQ}
+          onChange={(e) => setCustomerQ(e.target.value)}
+          placeholder="Search customers…"
+          aria-label="Search customers"
+        />
+        {customerResults.length > 0 ? (
+          <ul className="mt-1 max-h-24 overflow-auto rounded-lg border">
+            {customerResults.map((c) => (
+              <li key={c.id}>
+                <button
+                  type="button"
+                  className="w-full px-2.5 py-1.5 text-left text-sm hover:bg-muted/60"
+                  onClick={() => {
+                    setCustomer(c)
+                    setCustomerQ("")
+                    setCustomerResults([])
+                  }}
+                >
+                  {customerName(c)}
+                  {c.phone ? ` · ${c.phone}` : ""}
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {showNewCustomer ? (
+          <div className="mt-1.5 grid grid-cols-2 gap-1.5 rounded-lg border p-2">
+            <Input
+              className="h-8"
+              placeholder="First name"
+              value={newFirst}
+              onChange={(e) => setNewFirst(e.target.value)}
+            />
+            <Input
+              className="h-8"
+              placeholder="Last name"
+              value={newLast}
+              onChange={(e) => setNewLast(e.target.value)}
+            />
+            <Input
+              className="h-8 col-span-2"
+              placeholder="Phone"
+              value={newPhone}
+              onChange={(e) => setNewPhone(e.target.value)}
+            />
+            <Button
+              type="button"
+              size="sm"
+              className="col-span-2 h-8"
+              disabled={pending || !newFirst.trim()}
+              onClick={createCustomer}
+            >
+              Save customer
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
-        {/* Cart items */}
-        <div className="rounded-xl border bg-card">
-          <div className="flex items-center justify-between border-b px-3 py-2">
-            <p className="text-sm font-semibold">Cart</p>
+      {/* Cart — takes all remaining space */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pt-2">
+        <div className="flex shrink-0 items-center justify-between gap-2 pb-1.5">
+          <p className="text-sm font-semibold">
+            Cart
+            {cart.length > 0 ? (
+              <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                ({cart.reduce((n, l) => n + l.quantity, 0)} items)
+              </span>
+            ) : null}
+          </p>
+          <div className="flex items-center gap-1">
+            <Input
+              id="pos-notes"
+              className="h-7 w-28 text-xs"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notes"
+              aria-label="Sale notes"
+            />
             {cart.length > 0 ? (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs"
+                className="h-7 px-2 text-xs"
                 onClick={clearCart}
               >
                 Clear
               </Button>
             ) : null}
           </div>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-hidden rounded-xl border bg-card">
           {cart.length === 0 ? (
-            <div className="flex flex-col items-center px-4 py-8 text-center">
+            <div className="flex h-full min-h-[8rem] flex-col items-center justify-center px-4 text-center">
               <ShoppingCart
-                className="mb-2 size-7 text-muted-foreground/40"
+                className="mb-2 size-8 text-muted-foreground/40"
                 aria-hidden
               />
               <p className="text-sm font-medium">Cart is empty</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Scan a barcode or select a product to begin.
+                Scan or select products — cart fills this space.
               </p>
             </div>
           ) : (
-            <ul className="max-h-[min(40vh,22rem)] divide-y overflow-auto">
+            <ul className="h-full divide-y overflow-y-auto">
               {cart.map((line) => {
                 const overStock =
                   line.trackInventory && line.quantity > line.stockQty
@@ -1368,7 +1387,9 @@ function CheckoutColumn(props: {
                   <li key={line.productId} className="px-3 py-2">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{line.name}</p>
+                        <p className="truncate text-sm font-medium">
+                          {line.name}
+                        </p>
                         <p className="text-[11px] text-muted-foreground">
                           {formatCurrency(
                             line.unitPrice,
@@ -1467,22 +1488,10 @@ function CheckoutColumn(props: {
             </ul>
           )}
         </div>
-
-        <Field>
-          <FieldLabel htmlFor="pos-notes" className="text-xs">
-            Notes
-          </FieldLabel>
-          <Input
-            id="pos-notes"
-            className="h-8"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Optional"
-          />
-        </Field>
       </div>
 
-      <div className="shrink-0 border-t bg-background p-3 md:p-4">
+      {/* Totals + payment — fixed footer */}
+      <div className="shrink-0 border-t bg-background px-3 py-2.5">
         <PaymentPanel
           pending={pending}
           paymentLines={paymentLines}
@@ -1564,8 +1573,8 @@ function PaymentPanel({
   }
 
   return (
-    <div className="space-y-3">
-      <dl className="space-y-1 text-sm">
+    <div className="space-y-2">
+      <dl className="space-y-0.5 text-sm">
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">Subtotal</dt>
           <dd className="tabular-nums">
@@ -1586,19 +1595,15 @@ function PaymentPanel({
             {formatCurrency(taxTotal, currencyCode, currencyLocale)}
           </dd>
         </div>
-        <div className="mt-1 flex items-baseline justify-between gap-3 border-t pt-2">
-          <dt className="text-base font-semibold tracking-wide">TOTAL</dt>
-          <dd className="font-heading text-2xl font-semibold tracking-tight tabular-nums">
+        <div className="mt-1 flex items-baseline justify-between gap-3 border-t pt-1.5">
+          <dt className="text-sm font-semibold tracking-wide">TOTAL</dt>
+          <dd className="font-heading text-xl font-semibold tracking-tight tabular-nums">
             {formatCurrency(grand, currencyCode, currencyLocale)}
           </dd>
         </div>
       </dl>
       <p className="text-[10px] leading-snug text-muted-foreground">
-        Preview only — server total is authoritative. Cashier max discount{" "}
-        {maxDiscountPctUi}%.
-        {subtotal !== merchandise - discountTotal
-          ? ""
-          : ""}
+        Preview · cashier max discount {maxDiscountPctUi}%
       </p>
       {discountWarn ? (
         <p className="text-[11px] text-amber-700 dark:text-amber-300">
@@ -1607,12 +1612,12 @@ function PaymentPanel({
         </p>
       ) : null}
 
-      <div className="space-y-2">
-        <p className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+      <div className="space-y-1.5">
+        <p className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
           Payment
         </p>
         {paymentLines.map((line, index) => (
-          <div key={line.id} className="space-y-2 rounded-lg border p-2.5">
+          <div key={line.id} className="space-y-1.5 rounded-lg border p-2">
             <div className="flex items-end justify-between gap-2">
               <Field className="min-w-0 flex-1">
                 <FieldLabel
@@ -1623,7 +1628,7 @@ function PaymentPanel({
                 </FieldLabel>
                 <select
                   id={`pay-method-${line.id}`}
-                  className="h-9 w-full rounded-lg border border-input bg-background px-2.5 text-sm"
+                  className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm"
                   value={line.method}
                   onChange={(e) =>
                     updateLine(line.id, {
@@ -1670,7 +1675,7 @@ function PaymentPanel({
                   </FieldLabel>
                   <Input
                     id={`tendered-${line.id}`}
-                    className="h-9"
+                    className="h-8"
                     inputMode="decimal"
                     value={line.tendered}
                     onChange={(e) =>
@@ -1689,7 +1694,7 @@ function PaymentPanel({
                     </FieldLabel>
                     <Input
                       id={`amount-${line.id}`}
-                      className="h-9"
+                      className="h-8"
                       inputMode="decimal"
                       value={line.amount}
                       onChange={(e) =>
@@ -1707,7 +1712,7 @@ function PaymentPanel({
                 </FieldLabel>
                 <Input
                   id={`amount-${line.id}`}
-                  className="h-9"
+                  className="h-8"
                   inputMode="decimal"
                   value={line.amount}
                   onChange={(e) =>
@@ -1730,7 +1735,7 @@ function PaymentPanel({
           type="button"
           variant="outline"
           size="sm"
-          className="h-8"
+          className="h-7 text-xs"
           onClick={() =>
             setPaymentLines((prev) => [...prev, newPaymentLine("card")])
           }
@@ -1763,11 +1768,11 @@ function PaymentPanel({
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-2 pt-1">
+      <div className="flex flex-col gap-1.5 pt-0.5">
         <Button
           type="button"
           size="lg"
-          className="btn-h h-11 w-full text-base font-semibold"
+          className="btn-h h-10 w-full text-sm font-semibold"
           disabled={pending || grand <= 0}
           onClick={onComplete}
           aria-busy={pending}
@@ -1785,7 +1790,7 @@ function PaymentPanel({
           <Button
             type="button"
             variant="ghost"
-            className="h-9 text-muted-foreground"
+            className="h-8 text-muted-foreground"
             disabled={pending}
             onClick={onHold}
           >
