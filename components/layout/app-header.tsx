@@ -7,6 +7,7 @@ import { toast } from "sonner"
 
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { AppBreadcrumbs } from "@/components/layout/app-breadcrumbs"
+import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { UserMenu } from "@/components/layout/user-menu"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -113,6 +114,8 @@ export function AppHeader({
             : "Notifications"}
         </TooltipContent>
       </Tooltip>
+
+      <ThemeToggle />
 
       <UserMenu session={session} />
     </header>
