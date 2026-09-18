@@ -1,0 +1,83 @@
+{
+  "version": 2,
+  "format": "webp",
+  "dimensions": { "width": 1200, "height": 900 },
+  "aspectRatio": "4:3",
+  "storageObjectNameTemplate": "demo-{filename}",
+  "storagePathTemplate": "{orgId}/{shopId}/{repairJobId}/demo-{filename}",
+  "source": "ai-generated-repair-documentation",
+  "notes": "Deterministic DEMO repair bench photography. Mapping is by repair_jobs.internal_notes DEMO_PHOTO_SET marker only — never by reported_issue text. Product catalog imagery is out of scope.",
+  "scenarios": [
+    {
+      "id": "cracked",
+      "marker": "DEMO_PHOTO_SET:cracked",
+      "photos": [
+        {
+          "file": "cracked-front.webp",
+          "caption": "DEMO: cracked display front"
+        },
+        { "file": "device-back.webp", "caption": "DEMO: device back" },
+        {
+          "file": "intake-overview.webp",
+          "caption": "DEMO: intake overview"
+        }
+      ]
+    },
+    {
+      "id": "charging",
+      "marker": "DEMO_PHOTO_SET:charging",
+      "photos": [
+        {
+          "file": "charging-port.webp",
+          "caption": "DEMO: charging port close-up"
+        },
+        {
+          "file": "device-overview.webp",
+          "caption": "DEMO: device overview"
+        }
+      ]
+    },
+    {
+      "id": "liquid",
+      "marker": "DEMO_PHOTO_SET:liquid",
+      "photos": [
+        {
+          "file": "liquid-indicator.webp",
+          "caption": "DEMO: liquid exposure diagnostic"
+        },
+        {
+          "file": "exterior-condition.webp",
+          "caption": "DEMO: exterior condition"
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "marker": "DEMO_PHOTO_SET:camera",
+      "photos": [
+        {
+          "file": "camera-damage.webp",
+          "caption": "DEMO: camera damage"
+        },
+        {
+          "file": "device-overview.webp",
+          "caption": "DEMO: device overview"
+        }
+      ]
+    },
+    {
+      "id": "before_after",
+      "marker": "DEMO_PHOTO_SET:before_after",
+      "photos": [
+        {
+          "file": "before-screen.webp",
+          "caption": "DEMO: before screen repair"
+        },
+        {
+          "file": "after-screen.webp",
+          "caption": "DEMO: after screen repair"
+        }
+      ]
+    }
+  ]
+}

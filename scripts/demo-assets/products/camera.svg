@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img">
+  <rect width="100%" height="100%" fill="#f4f4f5"/>
+  
+  <rect x="140" y="140" width="520" height="520" rx="48" fill="#ffffff" stroke="#e4e4e7" stroke-width="4"/>
+  <rect x="220" y="220" width="360" height="280" rx="28" fill="#c4b5fd"/>
+  <rect x="260" y="540" width="280" height="48" rx="12" fill="#d4d4d8"/>
+  <text x="400" y="680" text-anchor="middle" font-family="Arial,sans-serif" font-size="28" fill="#52525b">Camera module</text>
+  <text x="400" y="720" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#a1a1aa">DEMO · synthetic</text>
+
+</svg>

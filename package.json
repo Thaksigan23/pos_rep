@@ -1,0 +1,52 @@
+{
+  "name": "mobilepos",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:db": "node scripts/phase3-db-tests.mjs",
+    "seed:demo": "node scripts/seed-demo-data.mjs",
+    "seed:demo:realism": "node scripts/seed-demo-data.mjs --refresh-realism",
+    "seed:demo:images": "node scripts/seed-demo-images.mjs",
+    "validate:demo": "node scripts/validate-demo-realism.mjs",
+    "demo:reset-passwords": "node scripts/reset-demo-passwords.mjs",
+    "db:push": "node scripts/apply-migrations.mjs push",
+    "db:types": "node scripts/apply-migrations.mjs types"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@hookform/resolvers": "^5.9.1",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.3.0",
+    "lucide-react": "^1.47.0",
+    "next": "16.3.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-hook-form": "^7.88.0",
+    "recharts": "^3.10.1",
+    "server-only": "^0.0.1",
+    "shadcn": "^4.21.0",
+    "sonner": "^2.0.8",
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@supabase/postgrest-typegen": "^0.2.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.5",
+    "pg": "^8.23.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

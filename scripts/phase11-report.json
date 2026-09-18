@@ -1,0 +1,1033 @@
+{
+  "method": "playwright_channel_chrome",
+  "note": "cursor-ide-browser MCP could not retain tabs in this session; Playwright used system Chrome.",
+  "loginOk": true,
+  "screens_tested": [
+    "dashboard /",
+    "pos /pos",
+    "repairs /repairs",
+    "repair_detail",
+    "customers_list /customers",
+    "customers_detail",
+    "products_list /products",
+    "products_detail",
+    "/inventory",
+    "/inventory/movements",
+    "/inventory/adjust",
+    "purchases_list /purchases",
+    "purchases_detail",
+    "suppliers_list /suppliers",
+    "suppliers_detail",
+    "/sales",
+    "sale_detail",
+    "receipt",
+    "sale_refunded",
+    "/expenses",
+    "/expenses/new",
+    "warranties_list /warranties",
+    "warranties_detail",
+    "/notifications",
+    "/reports",
+    "users_list /users",
+    "users_detail",
+    "/settings",
+    "/settings/audit",
+    "mobile /",
+    "mobile /pos",
+    "mobile /repairs",
+    "mobile /repairs/new",
+    "mobile /customers",
+    "mobile /customers/new",
+    "mobile /products",
+    "mobile /sales",
+    "mobile /sales/251695a7-c911-42de-ac3b-eeb1d56d421b",
+    "mobile /reports",
+    "mobile /settings",
+    "repair_detail_real",
+    "customer_detail_real",
+    "product_detail_url_real",
+    "mobile_repair_detail_real"
+  ],
+  "screens_failed": [],
+  "defects": [],
+  "pos_smoke": {
+    "search": true,
+    "walkIn": true,
+    "heldSales": true,
+    "paymentUi": true,
+    "productImages": true,
+    "afterSearchProducts": true,
+    "imagesAfterSearch": 8,
+    "didNotCompleteSale": true
+  },
+  "repair_smoke": {
+    "url": "http://localhost:3000/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+    "tabsFound": {
+      "Status": true,
+      "Details": true,
+      "Estimates": true,
+      "Parts": true,
+      "Photos": true,
+      "Payments": true,
+      "History": true
+    },
+    "lightbox": true,
+    "href": "http://localhost:3000/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+    "title": "Repair detail · MobilePOS",
+    "badTokens": [],
+    "demoColonCount": 0,
+    "brokenImgCount": 0,
+    "overflowX": false,
+    "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+    "tabLabels": [
+      "Status",
+      "Details",
+      "Estimates",
+      "Parts",
+      "Photos",
+      "Payments",
+      "History"
+    ],
+    "hasDialog": true
+  },
+  "reports_patched_ui": {
+    "presets": true,
+    "periodText": true,
+    "financialMetrics": true,
+    "salesOverTime": true,
+    "charts": true,
+    "csv": true
+  },
+  "images_result": {
+    "pos": {
+      "imgCount": 8,
+      "loaded": 8,
+      "broken": 0
+    },
+    "repairPhotos": {
+      "url": "http://localhost:3000/repairs/new",
+      "tabsFound": {
+        "Status": false,
+        "Details": false,
+        "Estimates": false,
+        "Parts": false,
+        "Photos": false,
+        "Payments": false,
+        "History": false
+      },
+      "lightbox": false,
+      "demoColonCount": 0,
+      "badTokens": []
+    },
+    "anyBroken": true
+  },
+  "mobile_issues": [],
+  "console_issues": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "url": "http://localhost:3000/login"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/"
+    },
+    {
+      "type": "error",
+      "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh",
+      "url": "http://localhost:3000/pos"
+    },
+    {
+      "type": "error",
+      "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh",
+      "url": "http://localhost:3000/pos"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/repairs"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/repairs/new"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/products/new"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/inventory/movements"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/inventory/adjust"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/purchases"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/purchases/new"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/sales"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/sales/7ecd575e-eaca-43ba-af02-c6bc417af93f"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/sales/7ecd575e-eaca-43ba-af02-c6bc417af93f/receipt"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/sales/251695a7-c911-42de-ac3b-eeb1d56d421b"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/expenses/new"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/warranties"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/notifications"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/reports"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/users"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/settings/audit"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/"
+    },
+    {
+      "type": "error",
+      "text": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` wh",
+      "url": "http://localhost:3000/pos"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/pos"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/repairs"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/repairs/new"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/customers"
+    },
+    {
+      "type": "warning",
+      "text": "The resource http://localhost:3000/_next/static/chunks/%5Bnext%5D_internal_font_google_geist_5dc35238_module_0h3vbay.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionall",
+      "url": "http://localhost:3000/sales/251695a7-c911-42de-ac3b-eeb1d56d421b"
+    }
+  ],
+  "null_undefined_nan_demo_leaks": [],
+  "desktop_scans": [
+    {
+      "name": "dashboard",
+      "href": "http://localhost:3000/",
+      "title": "Dashboard · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "today": true,
+        "netCashFlow": true,
+        "salesToday": true,
+        "collected": true,
+        "expenses": true,
+        "pipeline": true,
+        "readyPickup": true,
+        "lowStock": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "pos",
+      "href": "http://localhost:3000/pos",
+      "title": "POS · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "search": true,
+        "walkIn": true,
+        "heldSales": true,
+        "paymentUi": true,
+        "productImages": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 8,
+      "loadedImgCount": 8
+    },
+    {
+      "name": "repairs",
+      "href": "http://localhost:3000/repairs",
+      "title": "Repairs · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "queue": true,
+        "tabs": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "repair_detail",
+      "href": "http://localhost:3000/repairs/new",
+      "title": "New repair · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasTabs": false,
+        "photosTab": false,
+        "noDemoInCaptions": true,
+        "tabsFound": {
+          "Status": false,
+          "Details": false,
+          "Estimates": false,
+          "Parts": false,
+          "Photos": false,
+          "Payments": false,
+          "History": false
+        },
+        "lightbox": false
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "customers_list",
+      "href": "http://localhost:3000/customers",
+      "title": "Customers · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "customers_detail",
+      "href": "http://localhost:3000/customers/new",
+      "title": "New customer · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "products_list",
+      "href": "http://localhost:3000/products",
+      "title": "Products · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 21,
+      "loadedImgCount": 21
+    },
+    {
+      "name": "products_detail",
+      "href": "http://localhost:3000/products/new",
+      "title": "New product · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "inventory:/inventory",
+      "href": "http://localhost:3000/inventory",
+      "title": "Inventory · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 2,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true,
+        "hasUi": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 21,
+      "loadedImgCount": 19
+    },
+    {
+      "name": "inventory:/inventory/movements",
+      "href": "http://localhost:3000/inventory/movements",
+      "title": "Inventory movements · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true,
+        "hasUi": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "inventory:/inventory/adjust",
+      "href": "http://localhost:3000/inventory/adjust",
+      "title": "Stock adjustment · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true,
+        "hasUi": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "purchases_list",
+      "href": "http://localhost:3000/purchases",
+      "title": "Purchases · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "purchases_detail",
+      "href": "http://localhost:3000/purchases/new",
+      "title": "New purchase · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "suppliers_list",
+      "href": "http://localhost:3000/suppliers",
+      "title": "Suppliers · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "suppliers_detail",
+      "href": "http://localhost:3000/suppliers/new",
+      "title": "New supplier · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "sales_list",
+      "href": "http://localhost:3000/sales",
+      "title": "Sales · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "tabs": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "sale_detail",
+      "href": "http://localhost:3000/sales/7ecd575e-eaca-43ba-af02-c6bc417af93f",
+      "title": "Sale · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasReceiptLink": true,
+        "refundInfo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "receipt",
+      "href": "http://localhost:3000/sales/7ecd575e-eaca-43ba-af02-c6bc417af93f/receipt",
+      "title": "Receipt · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 2,
+      "loadedImgCount": 2
+    },
+    {
+      "name": "sale_refunded",
+      "href": "http://localhost:3000/sales/251695a7-c911-42de-ac3b-eeb1d56d421b",
+      "title": "Sale · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "refundedOrPartial": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "/expenses",
+      "href": "http://localhost:3000/expenses",
+      "title": "Expenses · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true,
+        "form": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "/expenses/new",
+      "href": "http://localhost:3000/expenses/new",
+      "title": "New expense · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true,
+        "form": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "warranties_list",
+      "href": "http://localhost:3000/warranties",
+      "title": "Warranties · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "warranties_detail",
+      "href": "http://localhost:3000/warranties/86a403f4-4fc5-464e-9451-51192d62ae97",
+      "title": "Warranty · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "notifications",
+      "href": "http://localhost:3000/notifications",
+      "title": "Notifications · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "reports",
+      "href": "http://localhost:3000/reports",
+      "title": "Reports · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "presets": true,
+        "periodText": true,
+        "financialMetrics": true,
+        "salesOverTime": true,
+        "charts": true,
+        "csv": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "users_list",
+      "href": "http://localhost:3000/users",
+      "title": "Users · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "hasRows": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "users_detail",
+      "href": "http://localhost:3000/users/new",
+      "title": "New staff · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "hasContent": true,
+        "noDemo": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "settings",
+      "href": "http://localhost:3000/settings",
+      "title": "Settings · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "loads": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 2,
+      "loadedImgCount": 2
+    },
+    {
+      "name": "audit",
+      "href": "http://localhost:3000/settings/audit",
+      "title": "Audit log · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "denseTable": true,
+        "detailsBtn": true,
+        "detailsDialog": true
+      },
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    }
+  ],
+  "mobile_scans": [
+    {
+      "name": "mobile:/",
+      "href": "http://localhost:3000/",
+      "title": "Dashboard · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ DEMO MOBILE REPAIR Welcome back, Ruwan Owner Owner · Sep 18, 2026 · Asia/Colombo Open POS New repair Sales Inventory TODAY · SEP 18, 2026 SALES TODA",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/pos",
+      "href": "http://localhost:3000/pos",
+      "title": "POS · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": false
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ Point of Sale Demo Mobile Repair Held Cart Barcode scanner works while search is not focused. Press Enter to look up. Ready to scan Search by name o",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/repairs",
+      "href": "http://localhost:3000/repairs",
+      "title": "Repairs · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ DEMO MOBILE REPAIR Repairs Queue, intake, and track repair jobs for this shop. New repair All Received Diagnosing Waiting approval Waiting parts In ",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/repairs/new",
+      "href": "http://localhost:3000/repairs/new",
+      "title": "New repair · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": false
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ Repairs INTAKE New repair Capture the customer, device, accessories, and reported issue. Customer Select customer Nuwan Herath · +94 77 100 1016 (CU",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/customers",
+      "href": "http://localhost:3000/customers",
+      "title": "Customers · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ CRM Customers Search customers, open profiles, and start repairs from their devices. New customer Filter Customer Phone Actions Nuwan Herath CUS-202",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/customers/new",
+      "href": "http://localhost:3000/customers/new",
+      "title": "New customer · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": false
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ Customers CRM New customer Create a customer profile before attaching devices or opening a repair. First name Last name Phone Alternate phone Email ",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/products",
+      "href": "http://localhost:3000/products",
+      "title": "Products · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 3,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ CATALOG Products Manage SKUs, pricing, and stock-tracked items for this shop. New product All categories Audio Batteries Cables & Chargers Cameras C",
+      "imgCount": 21,
+      "loadedImgCount": 18
+    },
+    {
+      "name": "mobile:/sales",
+      "href": "http://localhost:3000/sales",
+      "title": "Sales · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ DEMO MOBILE REPAIR Sales Completed, held, and refunded retail sales. Open POS All Held Completed Partial refund Refunded Cancelled Filter Sale # Cus",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/sales/251695a7-c911-42de-ac3b-eeb1d56d421b",
+      "href": "http://localhost:3000/sales/251695a7-c911-42de-ac3b-eeb1d56d421b",
+      "title": "Sale · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": true
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ Sales SALE INV-2026-000071 Partially refunded Fathima Rizwan Receipt Refund Total LKR 15,200.00 Paid (net) LKR 3,700.00 Cashier Ruwan Jayasuriya Sep",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/reports",
+      "href": "http://localhost:3000/reports",
+      "title": "Reports · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": false
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ DEMO MOBILE REPAIR Reports This month · Sep 1, 2026 → Sep 18, 2026 · Asia/Colombo Today Yesterday This week This month Custom FINANCIAL · SEP 1, 202",
+      "imgCount": 1,
+      "loadedImgCount": 1
+    },
+    {
+      "name": "mobile:/settings",
+      "href": "http://localhost:3000/settings",
+      "title": "Settings · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "keyChecks": {
+        "overflowX": false,
+        "navUsable": true,
+        "clippedHint": false
+      },
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ DEMO MOBILE REPAIR Settings Shop identity, tax, receipts, inventory, and POS controls. SHOP LOGO Optional. Used on receipts and settings preview. Ke",
+      "imgCount": 2,
+      "loadedImgCount": 2
+    }
+  ],
+  "files_changed": [],
+  "detail_rescans": {
+    "repair_list_hrefs_sample": [
+      "/repairs/new",
+      "/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+      "/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+      "/repairs/15a4c69b-b4ed-4a36-808e-811bfe86652e",
+      "/repairs/15a4c69b-b4ed-4a36-808e-811bfe86652e",
+      "/repairs/97551043-eace-4e76-88e5-84b1987e212d",
+      "/repairs/97551043-eace-4e76-88e5-84b1987e212d",
+      "/repairs/78f58f7e-c8eb-4d30-aeb4-c6a819126694",
+      "/repairs/78f58f7e-c8eb-4d30-aeb4-c6a819126694",
+      "/repairs/2a2c4317-a4fc-4b60-90ac-9e011b4afe0e"
+    ],
+    "repair_detail_url": "/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+    "repair_smoke": {
+      "url": "http://localhost:3000/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+      "tabsFound": {
+        "Status": true,
+        "Details": true,
+        "Estimates": true,
+        "Parts": true,
+        "Photos": true,
+        "Payments": true,
+        "History": true
+      },
+      "lightbox": true,
+      "href": "http://localhost:3000/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+      "title": "Repair detail · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "tabLabels": [
+        "Status",
+        "Details",
+        "Estimates",
+        "Parts",
+        "Photos",
+        "Payments",
+        "History"
+      ],
+      "hasDialog": true
+    },
+    "customer_detail_url": "/customers/7347186f-e8b1-4ce7-bfca-bfedb01f5d0a",
+    "customer_detail": {
+      "href": "http://localhost:3000/customers/7347186f-e8b1-4ce7-bfca-bfedb01f5d0a",
+      "title": "Customer · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "tabLabels": [],
+      "hasDialog": false
+    },
+    "product_detail_url": "/products/2ff69235-38cc-4b51-bb4b-a5d391ebc8da",
+    "product_detail": {
+      "href": "http://localhost:3000/products/2ff69235-38cc-4b51-bb4b-a5d391ebc8da",
+      "title": "Product · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "snippet": "MOBILEPOS Demo Mobile Repair WORKSPACE Dashboard POS Repairs Customers CATALOG Products Inventory Purchases Suppliers FINANCE Sales Expenses Reports OPERATIONS Warranties Notifications ADMIN Staff Set",
+      "tabLabels": [],
+      "hasDialog": false
+    },
+    "mobile_repair_detail": {
+      "href": "http://localhost:3000/repairs/5e2daeae-700d-4073-8f88-f74c2e0dc684",
+      "title": "Repair detail · MobilePOS",
+      "badTokens": [],
+      "demoColonCount": 0,
+      "brokenImgCount": 0,
+      "overflowX": false,
+      "snippet": "Open navigation Demo Mobile Repair Notifications RJ Repairs REPAIR JOB REP-2026-000051 Cancelled Liquid damage / no power Outstanding LKR 8,000.00 Paid LKR 0.00 of LKR 8,000.00 Customer Dilini Rathnay",
+      "tabLabels": [
+        "Status",
+        "Details",
+        "Estimates",
+        "Parts",
+        "Photos",
+        "Payments",
+        "History"
+      ],
+      "hasDialog": false
+    }
+  }
+}

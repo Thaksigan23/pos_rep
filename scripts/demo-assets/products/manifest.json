@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "format": "webp",
+  "dimensions": { "width": 800, "height": 800 },
+  "storageObjectName": "demo-primary.webp",
+  "storagePathTemplate": "{orgId}/{shopId}/products/{productId}/demo-primary.webp",
+  "source": "ai-generated-ecommerce-studio",
+  "notes": "Deterministic DEMO catalog imagery. Shared type assets map to multiple SKUs. No OEM logos. Repair photos are out of scope for this manifest.",
+  "assets": [
+    {
+      "filename": "oled-screen-assembly.webp",
+      "assetType": "screen",
+      "description": "Generic OLED smartphone display assembly"
+    },
+    {
+      "filename": "phone-battery.webp",
+      "assetType": "battery",
+      "description": "Generic smartphone replacement battery"
+    },
+    {
+      "filename": "lightning-charging-flex.webp",
+      "assetType": "charging_flex",
+      "description": "Generic dock/Lightning-style charging flex"
+    },
+    {
+      "filename": "usbc-charging-flex.webp",
+      "assetType": "charging_flex",
+      "description": "Generic USB-C charging port flex"
+    },
+    {
+      "filename": "rear-camera-module.webp",
+      "assetType": "camera",
+      "description": "Generic rear camera module"
+    },
+    {
+      "filename": "phone-speaker.webp",
+      "assetType": "speaker",
+      "description": "Generic smartphone speaker module"
+    },
+    {
+      "filename": "usbc-cable.webp",
+      "assetType": "cable",
+      "description": "USB-C cable"
+    },
+    {
+      "filename": "lightning-cable.webp",
+      "assetType": "cable",
+      "description": "Lightning-style cable"
+    },
+    {
+      "filename": "wall-charger.webp",
+      "assetType": "charger",
+      "description": "USB-C wall charger"
+    },
+    {
+      "filename": "clear-phone-case.webp",
+      "assetType": "case",
+      "description": "Clear phone case"
+    },
+    {
+      "filename": "rugged-phone-case.webp",
+      "assetType": "case",
+      "description": "Rugged phone case"
+    },
+    {
+      "filename": "soft-phone-case.webp",
+      "assetType": "case",
+      "description": "Soft silicone phone case"
+    },
+    {
+      "filename": "tempered-glass.webp",
+      "assetType": "protector",
+      "description": "Tempered glass screen protector"
+    },
+    {
+      "filename": "power-bank.webp",
+      "assetType": "power_bank",
+      "description": "Portable power bank"
+    },
+    {
+      "filename": "cleaning-kit.webp",
+      "assetType": "kit",
+      "description": "Phone cleaning kit"
+    },
+    {
+      "filename": "sim-eject-tool.webp",
+      "assetType": "tool",
+      "description": "SIM eject tool pack"
+    },
+    {
+      "filename": "opening-tool-kit.webp",
+      "assetType": "tool",
+      "description": "Phone opening tool kit"
+    },
+    {
+      "filename": "microphone-flex.webp",
+      "assetType": "flex",
+      "description": "Microphone flex cable"
+    }
+  ],
+  "products": [
+    {
+      "sku": "DEMO-SCR-IP13",
+      "name": "iPhone 13 OLED Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-SCR-IP14",
+      "name": "iPhone 14 OLED Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-SCR-IP15",
+      "name": "iPhone 15 OLED Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-SCR-S23",
+      "name": "Galaxy S23 Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-SCR-PXL7",
+      "name": "Pixel 7 Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-SCR-A54",
+      "name": "Galaxy A54 Screen",
+      "asset": "oled-screen-assembly.webp",
+      "assetType": "screen"
+    },
+    {
+      "sku": "DEMO-BAT-IP13",
+      "name": "iPhone 13 Battery",
+      "asset": "phone-battery.webp",
+      "assetType": "battery"
+    },
+    {
+      "sku": "DEMO-BAT-IP15",
+      "name": "iPhone 15 Battery",
+      "asset": "phone-battery.webp",
+      "assetType": "battery"
+    },
+    {
+      "sku": "DEMO-BAT-S23",
+      "name": "Galaxy S23 Battery",
+      "asset": "phone-battery.webp",
+      "assetType": "battery"
+    },
+    {
+      "sku": "DEMO-BAT-PXL",
+      "name": "Pixel Battery (7/8)",
+      "asset": "phone-battery.webp",
+      "assetType": "battery"
+    },
+    {
+      "sku": "DEMO-CHG-IP",
+      "name": "Lightning Charging Port",
+      "asset": "lightning-charging-flex.webp",
+      "assetType": "charging_flex"
+    },
+    {
+      "sku": "DEMO-CHG-USB",
+      "name": "USB-C Charging Port Module",
+      "asset": "usbc-charging-flex.webp",
+      "assetType": "charging_flex"
+    },
+    {
+      "sku": "DEMO-CAM-IP14",
+      "name": "iPhone 14 Rear Camera",
+      "asset": "rear-camera-module.webp",
+      "assetType": "camera"
+    },
+    {
+      "sku": "DEMO-CAM-PXL8",
+      "name": "Pixel 8 Camera Module",
+      "asset": "rear-camera-module.webp",
+      "assetType": "camera"
+    },
+    {
+      "sku": "DEMO-SPK-IP",
+      "name": "iPhone Loudspeaker",
+      "asset": "phone-speaker.webp",
+      "assetType": "speaker"
+    },
+    {
+      "sku": "DEMO-SPK-AND",
+      "name": "Android Earpiece Speaker",
+      "asset": "phone-speaker.webp",
+      "assetType": "speaker"
+    },
+    {
+      "sku": "DEMO-CBL-USBC",
+      "name": "USB-C Cable 1m",
+      "asset": "usbc-cable.webp",
+      "assetType": "cable"
+    },
+    {
+      "sku": "DEMO-CBL-USBC-3",
+      "name": "USB-C Cable 3m",
+      "asset": "usbc-cable.webp",
+      "assetType": "cable"
+    },
+    {
+      "sku": "DEMO-CBL-LTN",
+      "name": "Lightning Cable 1m",
+      "asset": "lightning-cable.webp",
+      "assetType": "cable"
+    },
+    {
+      "sku": "DEMO-CHG-20W",
+      "name": "20W USB-C Charger",
+      "asset": "wall-charger.webp",
+      "assetType": "charger"
+    },
+    {
+      "sku": "DEMO-CHG-30W",
+      "name": "30W Fast Charger",
+      "asset": "wall-charger.webp",
+      "assetType": "charger"
+    },
+    {
+      "sku": "DEMO-CSE-IP14",
+      "name": "iPhone 14 Clear Case",
+      "asset": "clear-phone-case.webp",
+      "assetType": "case"
+    },
+    {
+      "sku": "DEMO-CSE-S23",
+      "name": "Galaxy S23 Rugged Case",
+      "asset": "rugged-phone-case.webp",
+      "assetType": "case"
+    },
+    {
+      "sku": "DEMO-CSE-PXL",
+      "name": "Pixel 8 Soft Case",
+      "asset": "soft-phone-case.webp",
+      "assetType": "case"
+    },
+    {
+      "sku": "DEMO-GLS-IP15",
+      "name": "iPhone 15 Screen Protector",
+      "asset": "tempered-glass.webp",
+      "assetType": "protector"
+    },
+    {
+      "sku": "DEMO-GLS-UNI",
+      "name": "Universal Tempered Glass Pack",
+      "asset": "tempered-glass.webp",
+      "assetType": "protector"
+    },
+    {
+      "sku": "DEMO-PB-10K",
+      "name": "10,000mAh Power Bank",
+      "asset": "power-bank.webp",
+      "assetType": "power_bank"
+    },
+    {
+      "sku": "DEMO-PB-20K",
+      "name": "20,000mAh Power Bank",
+      "asset": "power-bank.webp",
+      "assetType": "power_bank"
+    },
+    {
+      "sku": "DEMO-KIT-CLN",
+      "name": "Phone Cleaning Kit",
+      "asset": "cleaning-kit.webp",
+      "assetType": "kit"
+    },
+    {
+      "sku": "DEMO-TOL-SIM",
+      "name": "SIM Eject Tool Pack (5)",
+      "asset": "sim-eject-tool.webp",
+      "assetType": "tool"
+    },
+    {
+      "sku": "DEMO-KIT-OPEN",
+      "name": "Phone Opening Tool Kit",
+      "asset": "opening-tool-kit.webp",
+      "assetType": "tool"
+    },
+    {
+      "sku": "DEMO-MIC-IP",
+      "name": "iPhone Microphone Flex",
+      "asset": "microphone-flex.webp",
+      "assetType": "flex"
+    }
+  ]
+}
