@@ -842,6 +842,14 @@ export function PosTerminal({
             <DialogFooter className="sm:justify-stretch sm:flex-col sm:gap-2">
               <Button
                 type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setSuccess(undefined)}
+              >
+                Close
+              </Button>
+              <Button
+                type="button"
                 className="w-full"
                 onClick={() => {
                   clearCart()
