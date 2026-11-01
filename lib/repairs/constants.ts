@@ -11,13 +11,13 @@ export type PaymentMethod = Database["public"]["Enums"]["payment_method"]
 
 /** Mirrors public.repair_transition_allowed — display only; DB is authoritative. */
 export const REPAIR_TRANSITIONS: Record<RepairStatus, readonly RepairStatus[]> = {
-  received: ["diagnosing"],
-  diagnosing: ["waiting_for_customer_approval", "approved"],
-  waiting_for_customer_approval: ["approved", "diagnosing"],
-  approved: ["waiting_for_parts", "in_repair"],
-  waiting_for_parts: ["in_repair"],
-  in_repair: ["testing", "waiting_for_parts"],
-  testing: ["ready_for_pickup", "in_repair"],
+  received: ["diagnosing", "completed"],
+  diagnosing: ["waiting_for_customer_approval", "approved", "completed"],
+  waiting_for_customer_approval: ["approved", "diagnosing", "completed"],
+  approved: ["waiting_for_parts", "in_repair", "completed"],
+  waiting_for_parts: ["in_repair", "completed"],
+  in_repair: ["testing", "waiting_for_parts", "completed"],
+  testing: ["ready_for_pickup", "in_repair", "completed"],
   ready_for_pickup: ["completed"],
   completed: ["delivered"],
   delivered: [],

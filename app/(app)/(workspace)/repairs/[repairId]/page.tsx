@@ -9,10 +9,10 @@ import { buttonVariants } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RepairDetailsEditor } from "@/features/repairs/components/repair-details-editor"
 import { RepairEstimatesPanel } from "@/features/repairs/components/repair-estimates-panel"
+import { RepairFinishPanel } from "@/features/repairs/components/repair-finish-panel"
 import { RepairPartsPanel } from "@/features/repairs/components/repair-parts-panel"
 import { RepairPaymentsPanel } from "@/features/repairs/components/repair-payments-panel"
 import { RepairPhotosPanel } from "@/features/repairs/components/repair-photos-panel"
-import { RepairStatusActions } from "@/features/repairs/components/repair-status-actions"
 import {
   getRepairJobDetail,
   listAssignableTechnicians,
@@ -236,14 +236,24 @@ export default async function RepairDetailPage({
         </div>
 
         <TabsContent value="status" className="panel panel-pad mt-0">
-          <h2 className="mb-3 font-heading text-lg">Status actions</h2>
-          <RepairStatusActions
+          <h2 className="mb-1 font-heading text-lg">Finish</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Accepting the job is done. Press Completed, then enter the work and
+            the final price.
+          </p>
+          <RepairFinishPanel
             repairId={repairId}
             status={job.status as RepairStatus}
+            quotedTotal={Number(job.total)}
+            paidTotal={paidTotal}
+            workDone={job.diagnosis}
             canCancel={
               canPerform(session.role, "exceptionalRepairCancel") ||
               session.role === "cashier"
             }
+            canTakePayment={canPerform(session.role, "takePayments")}
+            currencyCode={currencyCode}
+            currencyLocale={currencyLocale}
           />
         </TabsContent>
 

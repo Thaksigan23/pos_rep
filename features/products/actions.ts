@@ -19,7 +19,7 @@ export type ActionResult = { error: string } | { success: string; id?: string }
 
 const productSchema = z.object({
   name: z.string().trim().min(1).max(160),
-  sku: z.string().trim().min(1).max(64),
+  sku: z.string().trim().max(64).optional().or(z.literal("")),
   barcode: z.string().trim().max(64).optional().or(z.literal("")),
   productType: z.enum(["phone", "accessory", "spare_part", "other", "service"]),
   categoryId: z.string().uuid().optional().or(z.literal("")),
@@ -27,6 +27,7 @@ const productSchema = z.object({
   supplierId: z.string().uuid().optional().or(z.literal("")),
   description: z.string().trim().max(2000).optional().or(z.literal("")),
   sellingPrice: z.coerce.number().min(0),
+  openingQuantity: z.coerce.number().min(0).optional(),
   isTaxable: z.boolean().default(true),
   taxRateOverride: z.coerce.number().min(0).max(1).optional().nullable(),
   trackInventory: z.boolean().optional(),
@@ -48,6 +49,32 @@ function uniquenessMessage(message: string): string {
     return "A product with this barcode already exists."
   }
   return message
+}
+
+function suggestedSku(name: string) {
+  const base =
+    name
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, "")
+      .slice(0, 10) || "ITEM"
+  const suffix = Math.floor(1000 + Math.random() * 9000)
+  return `${base}-${suffix}`.slice(0, 64)
+}
+
+async function uniqueSku(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  name: string
+) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const sku = suggestedSku(name)
+    const { data } = await supabase
+      .from("products")
+      .select("id")
+      .eq("sku", sku)
+      .maybeSingle()
+    if (!data) return sku
+  }
+  return `${suggestedSku(name)}-${Date.now().toString().slice(-6)}`.slice(0, 64)
 }
 
 async function resolveCategoryBrand(
@@ -94,7 +121,13 @@ export async function createProductAction(input: unknown): Promise<ActionResult>
 
   const data = parsed.data
   const type = data.productType as ProductType
-  const track = data.trackInventory ?? defaultTrackInventory(type)
+  const openingQuantity = data.openingQuantity ?? 0
+  const track =
+    openingQuantity > 0
+      ? true
+      : (data.trackInventory ?? defaultTrackInventory(type))
+  const supabase = await createClient()
+  const sku = data.sku?.trim() || (await uniqueSku(supabase, data.name))
 
   let categoryId: string | null
   let brandId: string | null
@@ -105,8 +138,6 @@ export async function createProductAction(input: unknown): Promise<ActionResult>
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Could not create product." }
   }
-
-  const supabase = await createClient()
 
   if (data.barcode) {
     const { data: existingBarcode } = await supabase
@@ -124,7 +155,7 @@ export async function createProductAction(input: unknown): Promise<ActionResult>
     .insert({
       organization_id: session.organization.id,
       name: data.name,
-      sku: data.sku,
+      sku,
       barcode: data.barcode || null,
       product_type: type,
       category_id: categoryId,
@@ -159,14 +190,29 @@ export async function createProductAction(input: unknown): Promise<ActionResult>
       updated_by: session.userId,
     })
     if (costError) {
+      await supabase.from("products").delete().eq("id", product.id)
+      return { error: `Could not save the cost price: ${costError.message}` }
+    }
+  }
+
+  if (openingQuantity > 0) {
+    const { error: stockError } = await supabase.rpc("adjust_inventory", {
+      p_shop_id: session.shop.id,
+      p_product_id: product.id,
+      p_quantity_change: openingQuantity,
+      p_movement_type: "adjustment",
+      p_notes: "Opening quantity when the product was added",
+    })
+    if (stockError) {
+      await supabase.from("products").delete().eq("id", product.id)
       return {
-        error: `Product created, but cost could not be saved: ${costError.message}`,
-        id: product.id,
+        error: `Could not save the opening quantity: ${stockError.message}`,
       }
     }
   }
 
   revalidatePath(APP_ROUTES.products)
+  revalidatePath(APP_ROUTES.inventory)
   redirect(productPath(product.id))
 }
 
@@ -185,6 +231,10 @@ export async function updateProductAction(
   }
 
   const data = parsed.data
+  const sku = data.sku?.trim() ?? ""
+  if (!sku) {
+    return { error: "SKU is required." }
+  }
   const type = isProductType(data.productType) ? data.productType : "accessory"
   const track = data.trackInventory ?? defaultTrackInventory(type)
 
@@ -211,7 +261,7 @@ export async function updateProductAction(
       .from("products")
       .update({
         name: data.name,
-        sku: data.sku,
+        sku,
         barcode: data.barcode || null,
         product_type: type,
         category_id: categoryId,

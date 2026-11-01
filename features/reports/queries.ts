@@ -1,8 +1,13 @@
 import "server-only"
 
 import type { Json } from "@/types/database"
+import { roundMoney } from "@/lib/money/currency"
 import { createClient } from "@/lib/supabase/server"
 import type { ReportExportType } from "@/lib/reporting/metrics"
+import {
+  localDateString,
+  reportRangePreset,
+} from "@/lib/reporting/timezone"
 
 function asRecord(value: unknown): Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value)
@@ -157,6 +162,55 @@ export function parseReportSummary(raw: Json | null | undefined): ReportSummary 
       }
     }),
   }
+}
+
+export type EarningsSlice = {
+  key: "today" | "week" | "month" | "overall"
+  label: string
+  sales: number
+  repairs: number
+  total: number
+  expenses: number
+  net: number
+}
+
+export async function getEarningsBoard(
+  shopId: string,
+  timezone: string
+): Promise<EarningsSlice[]> {
+  const today = reportRangePreset("today", timezone)
+  const week = reportRangePreset("this_week", timezone)
+  const month = reportRangePreset("this_month", timezone)
+  const ranges = [
+    { key: "today" as const, label: "Today", ...today },
+    { key: "week" as const, label: "This week", ...week },
+    { key: "month" as const, label: "This month", ...month },
+    {
+      key: "overall" as const,
+      label: "Overall",
+      from: "2000-01-01",
+      to: localDateString(timezone),
+    },
+  ]
+  const summaries = await Promise.all(
+    ranges.map((range) => getReportSummary(shopId, range.from, range.to))
+  )
+  return ranges.map((range, index) => {
+    const summary = summaries[index]!
+    const sales = summary.sales.net_sales
+    const repairs = summary.repairs.collected
+    const total = roundMoney(sales + repairs)
+    const expenses = summary.expenses.total
+    return {
+      key: range.key,
+      label: range.label,
+      sales,
+      repairs,
+      total,
+      expenses,
+      net: roundMoney(total - expenses),
+    }
+  })
 }
 
 export async function getReportSummary(

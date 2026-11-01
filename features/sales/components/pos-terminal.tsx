@@ -258,7 +258,6 @@ export function PosTerminal({
   )
   const [customerQ, setCustomerQ] = useState("")
   const [customerResults, setCustomerResults] = useState<CustomerOption[]>([])
-  const [showNewCustomer, setShowNewCustomer] = useState(false)
   const [newFirst, setNewFirst] = useState("")
   const [newLast, setNewLast] = useState("")
   const [newPhone, setNewPhone] = useState("")
@@ -531,10 +530,6 @@ export function PosTerminal({
 
   function complete() {
     setError(undefined)
-    if (!customer) {
-      setError("Select a customer (walk-in is fine).")
-      return
-    }
     if (cart.length === 0) {
       setError("Add at least one product.")
       return
@@ -546,13 +541,18 @@ export function PosTerminal({
     }
 
     startTransition(async () => {
+      const resolved = await resolveSaleCustomerId()
+      if ("error" in resolved) {
+        setError(resolved.error)
+        return
+      }
       const result = await completeSaleAction({
         items: cart.map((l) => ({
           productId: l.productId,
           quantity: l.quantity,
           discountAmount: l.discountAmount || undefined,
         })),
-        customerId: customer.id,
+        customerId: resolved.id,
         notes: notes || undefined,
         payments: buildPaymentsPayloadFromLines(),
         idempotencyKey: crypto.randomUUID(),
@@ -569,8 +569,61 @@ export function PosTerminal({
       })
       setCart([])
       setNotes("")
+      setNewFirst("")
+      setNewLast("")
+      setNewPhone("")
+      if (walkInCustomer) {
+        setCustomer({
+          id: walkInCustomer.id,
+          first_name: walkInCustomer.first_name,
+          last_name: walkInCustomer.last_name,
+          phone: walkInCustomer.phone,
+          is_walk_in: true,
+        })
+      }
       setPaymentLines([newPaymentLine("cash")])
     })
+  }
+
+  async function resolveSaleCustomerId(): Promise<
+    { id: string } | { error: string }
+  > {
+    const typed = [newFirst, newLast]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(" ")
+    if (typed) {
+      const selectedName =
+        customer && !customer.is_walk_in
+          ? [customer.first_name, customer.last_name].filter(Boolean).join(" ").trim()
+          : ""
+      if (
+        customer &&
+        !customer.is_walk_in &&
+        selectedName.toLowerCase() === typed.toLowerCase()
+      ) {
+        return { id: customer.id }
+      }
+      const parts = typed.split(/\s+/)
+      const created = await createPosCustomerAction({
+        firstName: parts[0] ?? typed,
+        lastName: parts.slice(1).join(" "),
+        phone: newPhone,
+      })
+      if ("error" in created) return { error: created.error }
+      if (!created.id) return { error: "Could not save the customer." }
+      setCustomer({
+        id: created.id,
+        first_name: parts[0] ?? typed,
+        last_name: parts.slice(1).join(" "),
+        phone: newPhone || null,
+        is_walk_in: false,
+      })
+      return { id: created.id }
+    }
+    if (customer?.id) return { id: customer.id }
+    if (walkInCustomer) return { id: walkInCustomer.id }
+    return { error: "Add a customer name, or use walk-in." }
   }
 
   function hold() {
@@ -580,13 +633,18 @@ export function PosTerminal({
       return
     }
     startTransition(async () => {
+      const resolved = await resolveSaleCustomerId()
+      if ("error" in resolved) {
+        setError(resolved.error)
+        return
+      }
       const result = await holdSaleAction({
         items: cart.map((l) => ({
           productId: l.productId,
           quantity: l.quantity,
           discountAmount: l.discountAmount || undefined,
         })),
-        customerId: customer?.id,
+        customerId: resolved.id,
         notes: notes || undefined,
       })
       if ("error" in result) {
@@ -691,34 +749,6 @@ export function PosTerminal({
     })
   }
 
-  function createCustomer() {
-    startTransition(async () => {
-      const result = await createPosCustomerAction({
-        firstName: newFirst,
-        lastName: newLast,
-        phone: newPhone,
-      })
-      if ("error" in result) {
-        toast.error(result.error)
-        return
-      }
-      if (result.id) {
-        setCustomer({
-          id: result.id,
-          first_name: newFirst,
-          last_name: newLast,
-          phone: newPhone || null,
-          is_walk_in: false,
-        })
-        setShowNewCustomer(false)
-        setNewFirst("")
-        setNewLast("")
-        setNewPhone("")
-        toast.success("Customer added")
-      }
-    })
-  }
-
   const cartItemCount = cart.reduce((n, l) => n + l.quantity, 0)
 
   function stockLabel(p: PosProduct) {
@@ -773,8 +803,6 @@ export function PosTerminal({
     setCustomerQ,
     customerResults,
     setCustomerResults,
-    showNewCustomer,
-    setShowNewCustomer,
     newFirst,
     setNewFirst,
     newLast,
@@ -802,7 +830,6 @@ export function PosTerminal({
     currencyLocale,
     onComplete: complete,
     onHold: hold,
-    createCustomer,
   } as const
 
   return (
@@ -1329,8 +1356,6 @@ function CheckoutColumn(props: {
   setCustomerQ: Dispatch<SetStateAction<string>>
   customerResults: CustomerOption[]
   setCustomerResults: Dispatch<SetStateAction<CustomerOption[]>>
-  showNewCustomer: boolean
-  setShowNewCustomer: Dispatch<SetStateAction<boolean>>
   newFirst: string
   setNewFirst: Dispatch<SetStateAction<string>>
   newLast: string
@@ -1370,7 +1395,6 @@ function CheckoutColumn(props: {
   currencyLocale: string
   onComplete: () => void
   onHold: () => void
-  createCustomer: () => void
 }) {
   const {
     pending,
@@ -1381,8 +1405,6 @@ function CheckoutColumn(props: {
     setCustomerQ,
     customerResults,
     setCustomerResults,
-    showNewCustomer,
-    setShowNewCustomer,
     newFirst,
     setNewFirst,
     newLast,
@@ -1410,7 +1432,6 @@ function CheckoutColumn(props: {
     currencyLocale,
     onComplete,
     onHold,
-    createCustomer,
   } = props
 
   const cartQty = cart.reduce((n, l) => n + l.quantity, 0)
@@ -1442,27 +1463,20 @@ function CheckoutColumn(props: {
               Customer
             </p>
             <p className="truncate text-sm font-semibold">
-              {customer ? customerName(customer) : "Walk-in Customer"}
+              {newFirst.trim()
+                ? [newFirst, newLast].filter(Boolean).join(" ")
+                : customer
+                  ? customerName(customer)
+                  : "Walk-in Customer"}
             </p>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="h-8 shrink-0"
-            onClick={() => setShowNewCustomer((v) => !v)}
-          >
-            {showNewCustomer ? "Close" : "Add New"}
-          </Button>
-        </div>
-        <div className="flex gap-1.5">
           {walkInCustomer ? (
             <Button
               type="button"
               size="sm"
-              className="h-8"
-              variant={customer?.is_walk_in ? "default" : "outline"}
-              onClick={() =>
+              variant={customer?.is_walk_in && !newFirst.trim() ? "default" : "outline"}
+              className="h-8 shrink-0"
+              onClick={() => {
                 setCustomer({
                   id: walkInCustomer.id,
                   first_name: walkInCustomer.first_name,
@@ -1470,19 +1484,24 @@ function CheckoutColumn(props: {
                   phone: walkInCustomer.phone,
                   is_walk_in: true,
                 })
-              }
+                setNewFirst("")
+                setNewLast("")
+                setNewPhone("")
+                setCustomerQ("")
+                setCustomerResults([])
+              }}
             >
               Walk-in
             </Button>
           ) : null}
-          <Input
-            className="h-8 flex-1 text-sm"
-            value={customerQ}
-            onChange={(e) => setCustomerQ(e.target.value)}
-            placeholder="Search customer…"
-            aria-label="Search customers"
-          />
         </div>
+        <Input
+          className="h-8 text-sm"
+          value={customerQ}
+          onChange={(e) => setCustomerQ(e.target.value)}
+          placeholder="Search a returning customer…"
+          aria-label="Search customers"
+        />
         {customerResults.length > 0 ? (
           <ul className="max-h-20 overflow-auto rounded-lg border">
             {customerResults.map((c) => (
@@ -1492,6 +1511,9 @@ function CheckoutColumn(props: {
                   className="w-full px-2.5 py-1.5 text-left text-sm hover:bg-muted/60"
                   onClick={() => {
                     setCustomer(c)
+                    setNewFirst(c.first_name)
+                    setNewLast(c.last_name)
+                    setNewPhone(c.phone ?? "")
                     setCustomerQ("")
                     setCustomerResults([])
                   }}
@@ -1503,37 +1525,33 @@ function CheckoutColumn(props: {
             ))}
           </ul>
         ) : null}
-        {showNewCustomer ? (
-          <div className="grid grid-cols-2 gap-1.5 rounded-lg border p-2">
-            <Input
-              className="h-8"
-              placeholder="First name"
-              value={newFirst}
-              onChange={(e) => setNewFirst(e.target.value)}
-            />
-            <Input
-              className="h-8"
-              placeholder="Last name"
-              value={newLast}
-              onChange={(e) => setNewLast(e.target.value)}
-            />
-            <Input
-              className="col-span-2 h-8"
-              placeholder="Phone"
-              value={newPhone}
-              onChange={(e) => setNewPhone(e.target.value)}
-            />
-            <Button
-              type="button"
-              size="sm"
-              className="col-span-2 h-8"
-              disabled={pending || !newFirst.trim()}
-              onClick={createCustomer}
-            >
-              Save customer
-            </Button>
-          </div>
-        ) : null}
+        <div className="grid grid-cols-2 gap-1.5">
+          <Input
+            className="h-8"
+            placeholder="First name"
+            value={newFirst}
+            onChange={(e) => setNewFirst(e.target.value)}
+            aria-label="Customer first name"
+          />
+          <Input
+            className="h-8"
+            placeholder="Last name"
+            value={newLast}
+            onChange={(e) => setNewLast(e.target.value)}
+            aria-label="Customer last name"
+          />
+          <Input
+            className="col-span-2 h-8"
+            placeholder="Phone"
+            value={newPhone}
+            onChange={(e) => setNewPhone(e.target.value)}
+            aria-label="Customer phone"
+          />
+        </div>
+        <p className="text-[11px] leading-snug text-muted-foreground">
+          The customer is saved when you take payment. Leave the name blank for
+          walk-in.
+        </p>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">

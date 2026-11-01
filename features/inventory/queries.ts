@@ -7,6 +7,7 @@ import {
   type ProductType,
   type StockStatus,
 } from "@/lib/inventory/constants"
+import { roundMoney } from "@/lib/money/currency"
 import { PAGE_SIZE } from "@/lib/navigation/paths"
 import { createClient } from "@/lib/supabase/server"
 import { signShopAssetPaths } from "@/lib/storage/signed-urls"
@@ -85,6 +86,70 @@ export async function searchInventory(options: {
     total: count ?? 0,
     page,
     pageSize: PAGE_SIZE,
+  }
+}
+
+export type ShopStockValue = {
+  retailValue: number
+  costValue: number | null
+  units: number
+}
+
+/** Whole-shop stock value: selling price × quantity on hand, plus cost when recorded. */
+export async function getShopStockValue(shopId: string): Promise<ShopStockValue> {
+  const supabase = await createClient()
+  const pageSize = 1000
+  let from = 0
+  let retailValue = 0
+  let units = 0
+  const qtyByProduct = new Map<string, number>()
+
+  for (;;) {
+    const { data, error } = await supabase
+      .from("shop_product_inventory")
+      .select("product_id, quantity, selling_price")
+      .eq("shop_id", shopId)
+      .eq("track_inventory", true)
+      .range(from, from + pageSize - 1)
+
+    if (error) throw new Error(error.message)
+    const rows = data ?? []
+    for (const row of rows) {
+      const qty = Number(row.quantity ?? 0)
+      if (!(qty > 0)) continue
+      const productId = row.product_id as string
+      retailValue += qty * Number(row.selling_price ?? 0)
+      units += qty
+      qtyByProduct.set(productId, (qtyByProduct.get(productId) ?? 0) + qty)
+    }
+    if (rows.length < pageSize) break
+    from += pageSize
+  }
+
+  let costValue: number | null = null
+  const productIds = [...qtyByProduct.keys()]
+  if (productIds.length > 0) {
+    let cost = 0
+    let sawCost = false
+    for (let index = 0; index < productIds.length; index += 200) {
+      const batch = productIds.slice(index, index + 200)
+      const { data: costs, error } = await supabase
+        .from("product_costs")
+        .select("product_id, cost_price")
+        .in("product_id", batch)
+      if (error) break
+      for (const row of costs ?? []) {
+        sawCost = true
+        cost += Number(row.cost_price) * (qtyByProduct.get(row.product_id) ?? 0)
+      }
+    }
+    if (sawCost) costValue = roundMoney(cost)
+  }
+
+  return {
+    retailValue: roundMoney(retailValue),
+    costValue,
+    units,
   }
 }
 

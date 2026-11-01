@@ -256,11 +256,26 @@ export async function createPosCustomerAction(
   }
 
   const supabase = await createClient()
+  const phone = parsed.data.phone?.trim()
+  if (phone) {
+    const { data: existing, error: lookupError } = await supabase
+      .from("customers")
+      .select("id")
+      .eq("is_walk_in", false)
+      .eq("phone", phone)
+      .limit(1)
+      .maybeSingle()
+    if (lookupError) return { error: lookupError.message }
+    if (existing) {
+      return { success: "Customer already on file.", id: existing.id }
+    }
+  }
+
   const { data, error } = await supabase.rpc("create_customer", {
     p_payload: {
       first_name: parsed.data.firstName,
       last_name: parsed.data.lastName || "",
-      phone: parsed.data.phone || null,
+      phone: phone || null,
     },
   })
 

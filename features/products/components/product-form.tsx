@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 const schema = z.object({
   name: z.string().trim().min(1),
-  sku: z.string().trim().min(1),
+  sku: z.string().trim().optional(),
   barcode: z.string().optional(),
   productType: z.enum(["phone", "accessory", "spare_part", "other", "service"]),
   categoryId: z.string().optional(),
@@ -33,6 +33,7 @@ const schema = z.object({
   supplierId: z.string().optional(),
   description: z.string().optional(),
   sellingPrice: z.string().min(1),
+  openingQuantity: z.string().optional(),
   isTaxable: z.boolean(),
   taxRateOverride: z.string().optional(),
   trackInventory: z.boolean(),
@@ -82,6 +83,7 @@ export function ProductForm({
       description: defaults?.description ?? "",
       sellingPrice:
         defaults?.sellingPrice != null ? String(defaults.sellingPrice) : "0",
+      openingQuantity: defaults?.openingQuantity ?? "",
       isTaxable: defaults?.isTaxable ?? true,
       taxRateOverride: defaults?.taxRateOverride ?? "",
       trackInventory:
@@ -112,6 +114,10 @@ export function ProductForm({
         canEditCost && values.costPrice !== ""
           ? Number(values.costPrice)
           : null,
+      openingQuantity:
+        mode === "create" && values.openingQuantity
+          ? Number(values.openingQuantity)
+          : 0,
     }
     toast.message(
       mode === "create" ? "Creating product…" : "Update is coming…"
@@ -147,10 +153,16 @@ export function ProductForm({
             <Input id="name" {...form.register("name")} />
             <FieldError errors={[form.formState.errors.name]} />
           </Field>
-          <Field data-invalid={Boolean(form.formState.errors.sku)}>
-            <FieldLabel htmlFor="sku">SKU</FieldLabel>
+          <Field>
+            <FieldLabel htmlFor="sku">
+              {mode === "create" ? "SKU (optional)" : "SKU"}
+            </FieldLabel>
             <Input id="sku" {...form.register("sku")} />
-            <FieldError errors={[form.formState.errors.sku]} />
+            {mode === "create" ? (
+              <p className="text-xs text-muted-foreground">
+                Leave blank and one is filled in for you.
+              </p>
+            ) : null}
           </Field>
         </div>
 
@@ -280,6 +292,20 @@ export function ProductForm({
               {...form.register("sellingPrice")}
             />
           </Field>
+          {mode === "create" ? (
+            <Field>
+              <FieldLabel htmlFor="openingQuantity">Opening quantity</FieldLabel>
+              <Input
+                id="openingQuantity"
+                inputMode="decimal"
+                placeholder="0"
+                {...form.register("openingQuantity")}
+              />
+              <p className="text-xs text-muted-foreground">
+                Units on the shelf now. No second stock step.
+              </p>
+            </Field>
+          ) : null}
           {canEditCost ? (
             <Field>
               <FieldLabel htmlFor="costPrice">Cost price</FieldLabel>

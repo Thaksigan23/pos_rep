@@ -132,7 +132,7 @@ export default async function RepairsPage({
       <PageHeader
         eyebrow={session.shop.name}
         title="Repairs"
-        description="Queue, intake, and track repair jobs for this shop."
+        description="Accept a phone, print the customer receipt and shop sticker, then finish the job when the work is done."
         icon={Wrench}
         actions={
           <Link
@@ -140,7 +140,7 @@ export default async function RepairsPage({
             className={cn(buttonVariants(), "btn-h h-10 px-4")}
           >
             <Plus className="size-4" />
-            New repair
+            Accept repair
           </Link>
         }
       />

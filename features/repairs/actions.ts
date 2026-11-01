@@ -6,7 +6,7 @@ import { z } from "zod"
 
 import { canAccess, canPerform } from "@/lib/auth/permissions"
 import { requireWorkspaceSession } from "@/lib/auth/workspace"
-import { repairPath } from "@/lib/navigation/feature-paths"
+import { repairPath, repairPrintPath } from "@/lib/navigation/feature-paths"
 import { APP_ROUTES } from "@/lib/navigation/paths"
 import {
   isRepairStatus,
@@ -93,6 +93,212 @@ export async function createRepairJobAction(input: unknown): Promise<ActionResul
 
   revalidatePath(APP_ROUTES.repairs)
   redirect(repairPath(data))
+}
+
+const acceptRepairSchema = z.object({
+  customerName: z.string().trim().min(1, "Customer name is required").max(120),
+  phone: z.string().trim().min(5, "Phone number is required").max(40),
+  device: z.string().trim().min(1, "Device is required").max(120),
+  issue: z.string().trim().min(3, "Describe the problem").max(2000),
+  price: z.coerce.number().min(0, "Price cannot be negative"),
+})
+
+export async function acceptRepairAction(input: unknown): Promise<ActionResult> {
+  const session = await requireWorkspaceSession()
+  if (!canPerform(session.role, "intakeRepairs")) {
+    return { error: "You cannot accept repairs." }
+  }
+
+  const parsed = acceptRepairSchema.safeParse(input)
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the repair details." }
+  }
+
+  const supabase = await createClient()
+  const phone = parsed.data.phone
+  const nameParts = parsed.data.customerName.split(/\s+/).filter(Boolean)
+  const firstName = nameParts[0] ?? parsed.data.customerName
+  const lastName = nameParts.slice(1).join(" ")
+
+  const { data: existingCustomer, error: lookupError } = await supabase
+    .from("customers")
+    .select("id")
+    .eq("is_walk_in", false)
+    .eq("phone", phone)
+    .limit(1)
+    .maybeSingle()
+
+  if (lookupError) return { error: lookupError.message }
+
+  let customerId = existingCustomer?.id
+  if (!customerId) {
+    const { data: createdId, error: customerError } = await supabase.rpc(
+      "create_customer",
+      {
+        p_payload: {
+          shop_id: session.shop.id,
+          first_name: firstName,
+          last_name: lastName,
+          phone,
+        },
+      }
+    )
+    if (customerError || !createdId) {
+      return { error: customerError?.message ?? "Could not save the customer." }
+    }
+    customerId = createdId
+  }
+
+  const { data: device, error: deviceError } = await supabase
+    .from("customer_devices")
+    .insert({
+      organization_id: session.organization.id,
+      customer_id: customerId,
+      device_type: "phone",
+      model_label: parsed.data.device,
+    })
+    .select("id")
+    .single()
+
+  if (deviceError || !device) {
+    return { error: deviceError?.message ?? "Could not save the device." }
+  }
+
+  const { data: jobId, error: jobError } = await supabase.rpc("create_repair_job", {
+    p_payload: {
+      shop_id: session.shop.id,
+      customer_id: customerId,
+      device_id: device.id,
+      reported_issue: parsed.data.issue,
+      priority: "normal",
+      quoted_price: parsed.data.price,
+    },
+  })
+
+  if (jobError || !jobId) {
+    return { error: jobError?.message ?? "Could not accept the repair." }
+  }
+
+  revalidatePath(APP_ROUTES.repairs)
+  revalidatePath(APP_ROUTES.customers)
+  redirect(repairPrintPath(jobId))
+}
+
+const finishRepairSchema = z.object({
+  repairId: z.string().uuid(),
+  workDone: z.string().trim().max(2000).optional().or(z.literal("")),
+  finalPrice: z.coerce.number().min(0, "Price cannot be negative"),
+  collectPayment: z.boolean(),
+  method: z.enum(["cash", "card", "bank_transfer", "other"]),
+})
+
+export async function finishRepairAction(input: unknown): Promise<ActionResult> {
+  const session = await requireWorkspaceSession()
+  if (!canAccess(session.role, "repairs")) {
+    return { error: "You cannot finish repairs." }
+  }
+
+  const parsed = finishRepairSchema.safeParse(input)
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Check the completion details." }
+  }
+
+  const supabase = await createClient()
+  const repairId = parsed.data.repairId
+
+  const { data: job, error: jobError } = await supabase
+    .from("repair_jobs")
+    .select("id, status, shop_id")
+    .eq("id", repairId)
+    .maybeSingle()
+
+  if (jobError) return { error: jobError.message }
+  if (!job || job.shop_id !== session.shop.id) return { error: "Repair not found." }
+  if (job.status === "cancelled") return { error: "This repair was cancelled." }
+  if (job.status === "delivered") return { error: "This repair is already delivered." }
+
+  const { error: detailError } = await supabase.rpc("update_repair_job_details", {
+    p_repair_job_id: repairId,
+    p_payload: {
+      work_done: parsed.data.workDone || "",
+      final_price: parsed.data.finalPrice,
+    },
+  })
+
+  if (detailError) {
+    const message = detailError.message
+    if (message.includes("final_price") || message.includes("work_done")) {
+      return {
+        error:
+          "Apply the latest database migration, then finish the repair again. The shop database does not have the simple completion step yet.",
+      }
+    }
+    return { error: message }
+  }
+
+  const { data: payments, error: paymentReadError } = await supabase
+    .from("payments")
+    .select("amount, entry_type, voided_at")
+    .eq("reference_type", "repair")
+    .eq("reference_id", repairId)
+
+  if (paymentReadError) return { error: paymentReadError.message }
+
+  const paid = (payments ?? []).reduce((sum, row) => {
+    if (row.voided_at) return sum
+    const amount = Number(row.amount)
+    if (row.entry_type === "refund") return sum - amount
+    return sum + amount
+  }, 0)
+  const due = Math.round((parsed.data.finalPrice - paid) * 100) / 100
+
+  if (parsed.data.collectPayment && due > 0) {
+    if (!canPerform(session.role, "takePayments")) {
+      return { error: "You cannot take payment. Finish without collecting, or ask a cashier." }
+    }
+    const { error: payError } = await supabase.rpc("record_payment", {
+      p_payload: {
+        reference_type: "repair",
+        reference_id: repairId,
+        method: parsed.data.method,
+        amount: due,
+        idempotency_key: crypto.randomUUID(),
+      },
+    })
+    if (payError) return { error: payError.message }
+  }
+
+  if (job.status !== "completed") {
+    const { error: statusError } = await supabase.rpc("change_repair_status", {
+      p_repair_job_id: repairId,
+      p_new_status: "completed",
+      p_note: parsed.data.workDone || "Completed",
+    })
+    if (statusError) {
+      if (statusError.message.includes("Invalid repair status transition")) {
+        return {
+          error:
+            "Apply the latest database migration so a received repair can be marked completed directly.",
+        }
+      }
+      return { error: statusError.message }
+    }
+  }
+
+  revalidatePath(repairPath(repairId))
+  revalidatePath(repairPrintPath(repairId))
+  revalidatePath(APP_ROUTES.repairs)
+  revalidatePath(APP_ROUTES.dashboard)
+  revalidatePath(APP_ROUTES.reports)
+
+  if (parsed.data.finalPrice + 0.001 < paid) {
+    return {
+      success:
+        "Repair completed. The customer already paid more than this price, so refund the difference separately.",
+    }
+  }
+
+  return { success: "Repair completed." }
 }
 
 export async function changeRepairStatusAction(input: {

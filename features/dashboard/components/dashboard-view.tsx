@@ -19,6 +19,9 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import type { DashboardSummary } from "@/features/dashboard/queries"
+import type { ShopStockValue } from "@/features/inventory/queries"
+import { EarningsBoard } from "@/features/reports/components/earnings-board"
+import type { EarningsSlice } from "@/features/reports/queries"
 import type { AppRole } from "@/lib/auth/roles"
 import { canAccess } from "@/lib/auth/permissions"
 import { formatDisplayDate, formatDisplayDateTime } from "@/lib/datetime/format"
@@ -98,12 +101,16 @@ export function DashboardView({
   currencyCode,
   currencyLocale,
   timezone,
+  earnings,
+  stockValue,
 }: {
   summary: DashboardSummary
   role: AppRole
   currencyCode: string
   currencyLocale: string
   timezone?: string | null
+  earnings?: EarningsSlice[] | null
+  stockValue?: ShopStockValue | null
 }) {
   const money = (n: number) => formatCurrency(n, currencyCode, currencyLocale)
   const isTech = role === "technician"
@@ -224,6 +231,10 @@ export function DashboardView({
         </div>
       )}
 
+      {isOwnerAdmin && earnings && earnings.length > 0 ? (
+        <EarningsBoard periods={earnings} money={money} />
+      ) : null}
+
       {showFinancial && today ? (
         <div>
           <p className="section-label mb-2">
@@ -270,7 +281,18 @@ export function DashboardView({
       ) : null}
 
       {isOwnerAdmin && summary.inventory ? (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {stockValue ? (
+            <MetricCard
+              label="Shop stock value"
+              value={money(stockValue.retailValue)}
+              hint={
+                stockValue.costValue != null
+                  ? `${stockValue.units.toLocaleString()} units on hand · at cost ${money(stockValue.costValue)}`
+                  : `${stockValue.units.toLocaleString()} units · selling price × quantity`
+              }
+            />
+          ) : null}
           <MetricCard
             label="Low stock"
             value={String(summary.inventory.low_stock)}

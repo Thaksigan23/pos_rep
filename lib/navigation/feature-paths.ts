@@ -12,6 +12,10 @@ export function repairPath(repairId: string) {
   return `${APP_ROUTES.repairs}/${repairId}`
 }
 
+export function repairPrintPath(repairId: string) {
+  return `${APP_ROUTES.repairs}/${repairId}/print`
+}
+
 export function repairNewPath(params?: { customerId?: string; deviceId?: string }) {
   const search = new URLSearchParams()
   if (params?.customerId) search.set("customerId", params.customerId)

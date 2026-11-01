@@ -5,7 +5,8 @@ import { BarChart3, Download, FileDown } from "lucide-react"
 import { PageHeader } from "@/components/app/page-header"
 import { buttonVariants } from "@/components/ui/button"
 import { ReportCharts } from "@/features/reports/components/report-charts"
-import { getReportSummary } from "@/features/reports/queries"
+import { EarningsBoard } from "@/features/reports/components/earnings-board"
+import { getEarningsBoard, getReportSummary } from "@/features/reports/queries"
 import { canPerform } from "@/lib/auth/permissions"
 import { requirePageAccess } from "@/lib/auth/workspace"
 import { formatCurrency } from "@/lib/money/currency"
@@ -88,7 +89,10 @@ export default async function ReportsPage({
     ;({ from, to } = reportRangePreset("this_month", timezone))
   }
 
-  const summary = await getReportSummary(session.shop.id, from, to)
+  const [summary, earnings] = await Promise.all([
+    getReportSummary(session.shop.id, from, to),
+    getEarningsBoard(session.shop.id, timezone),
+  ])
   const { currencyCode, currencyLocale } = session.shopSettings
   const money = (n: number) => formatCurrency(n, currencyCode, currencyLocale)
   const rangeLabel =
@@ -181,6 +185,8 @@ export default async function ReportsPage({
           </button>
         </form>
       ) : null}
+
+      <EarningsBoard periods={earnings} money={money} />
 
       <div>
         <p className="section-label mb-2">

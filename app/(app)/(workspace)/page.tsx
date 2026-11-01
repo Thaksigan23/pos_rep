@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { PageHeader } from "@/components/app/page-header"
 import { DashboardView } from "@/features/dashboard/components/dashboard-view"
 import { getDashboardSummary } from "@/features/dashboard/queries"
+import { getShopStockValue } from "@/features/inventory/queries"
+import { getEarningsBoard } from "@/features/reports/queries"
 import { displayName, ROLE_LABELS } from "@/lib/auth/labels"
 import { requirePageAccess } from "@/lib/auth/workspace"
 import { formatDisplayDate } from "@/lib/datetime/format"
@@ -20,6 +22,15 @@ export default async function DashboardPage() {
   )
   const first = name.split(" ")[0] ?? name
   const summary = await getDashboardSummary(session.shop.id)
+  const isOwnerAdmin = session.role === "owner" || session.role === "admin"
+  const ownerExtras = isOwnerAdmin
+    ? await Promise.all([
+        getEarningsBoard(session.shop.id, session.shopSettings.timezone),
+        getShopStockValue(session.shop.id),
+      ] as const)
+    : null
+  const earnings = ownerExtras?.[0] ?? null
+  const stockValue = ownerExtras?.[1] ?? null
   const localDay = formatDisplayDate(summary.local_date)
 
   return (
@@ -36,6 +47,8 @@ export default async function DashboardPage() {
         currencyCode={session.shopSettings.currencyCode}
         currencyLocale={session.shopSettings.currencyLocale}
         timezone={session.shopSettings.timezone}
+        earnings={earnings}
+        stockValue={stockValue}
       />
     </div>
   )

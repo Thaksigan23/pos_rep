@@ -29,7 +29,7 @@ export default async function NewProductPage() {
       <PageHeader
         eyebrow="Catalog"
         title="New product"
-        description="SKU uniqueness is enforced per organization. Stock is not edited here."
+        description="Name, price, and opening quantity are saved together. SKU can be left blank."
         icon={PackagePlus}
       />
       <div className="rounded-2xl border bg-card p-6">

@@ -15,10 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { searchInventory } from "@/features/inventory/queries"
+import { searchInventory, getShopStockValue } from "@/features/inventory/queries"
 import { ProductThumbnail } from "@/features/products/components/product-thumbnail"
 import { listCatalogLookups } from "@/features/products/queries"
 import { requirePageAccess } from "@/lib/auth/workspace"
+import { formatCurrency } from "@/lib/money/currency"
 import {
   PRODUCT_TYPE_LABELS,
   STOCK_STATUS_LABELS,
@@ -57,7 +58,7 @@ export default async function InventoryPage({
   const stockStatus = firstSearchParam(params.stockStatus)
   const page = Math.max(1, Number(firstSearchParam(params.page) ?? "1") || 1)
 
-  const [{ rows, total, pageSize }, lookups] = await Promise.all([
+  const [{ rows, total, pageSize }, lookups, stockValue] = await Promise.all([
     searchInventory({
       shopId: session.shop.id,
       q,
@@ -67,8 +68,15 @@ export default async function InventoryPage({
       page,
     }),
     listCatalogLookups(),
+    getShopStockValue(session.shop.id),
   ])
   const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const money = (amount: number) =>
+    formatCurrency(
+      amount,
+      session.shopSettings.currencyCode,
+      session.shopSettings.currencyLocale
+    )
 
   function href(overrides: Record<string, string | undefined>) {
     const sp = new URLSearchParams()
@@ -120,6 +128,32 @@ export default async function InventoryPage({
           </div>
         }
       />
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="panel panel-pad py-3">
+          <p className="section-label">Shop stock value</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight">
+            {money(stockValue.retailValue)}
+          </p>
+          <p className="muted-xs mt-1">
+            Selling price × quantity on hand, in {session.shopSettings.currencyCode}.
+          </p>
+        </div>
+        <div className="panel panel-pad py-3">
+          <p className="section-label">Stock at cost</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight">
+            {stockValue.costValue != null ? money(stockValue.costValue) : "—"}
+          </p>
+          <p className="muted-xs mt-1">Cost price × quantity, where a cost is saved.</p>
+        </div>
+        <div className="panel panel-pad py-3">
+          <p className="section-label">Units on hand</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight">
+            {stockValue.units.toLocaleString()}
+          </p>
+          <p className="muted-xs mt-1">Tracked products with quantity above zero.</p>
+        </div>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {(
